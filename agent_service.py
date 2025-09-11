@@ -4,17 +4,18 @@ import traceback
 from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List, Dict, Any
 from fastapi.security import OAuth2PasswordBearer
 import jwt
 import requests
+import asyncio
 
-from IAMAssistant import IAMAssistant  # Ensure this is imported correctly
+from OrchestratorAgent import OrchestratorAgentWrapper
+from IAMAssistant import IAMAssistant  # Existing agent
 
-# Initialize FastAPI application
+
 app = FastAPI(title="IAM Assistant Service", version="1.0.0")
 
-# CORS configuration to allow Streamlit on 8501
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://127.0.0.1:8501", "http://localhost:8501"],
@@ -23,51 +24,51 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# JWT authentication - OAuth2PasswordBearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# Lazy singleton IAM Assistant with thread lock
 _assistant_lock = threading.Lock()
 _assistant: Optional[IAMAssistant] = None
+
+_orchestrator_lock = threading.Lock()
+_orchestrator_agent: Optional[OrchestratorAgentWrapper] = None
 
 
 def get_assistant() -> IAMAssistant:
     global _assistant
     if _assistant is None:
         with _assistant_lock:
-            if _assistant is None:  # double-checked locking
+            if _assistant is None:
                 _assistant = IAMAssistant()
     return _assistant
 
+def get_orchestrator_agent() -> OrchestratorAgentWrapper:
+    global _orchestrator_agent
+    if _orchestrator_agent is None:
+        with _orchestrator_lock:
+            if _orchestrator_agent is None:
+                _orchestrator_agent = OrchestratorAgentWrapper()
+    return _orchestrator_agent
 
-# Azure OpenID Configuration URL to get public keys (JWKS)
+# Token verification identical to existing code ...
 OPENID_CONFIG_URL = f"https://login.microsoftonline.com/{os.getenv('TENANT_ID')}/v2.0/.well-known/openid-configuration"
 
 
 def get_jwk():
-    """Fetch JWKS from Azure's OpenID Configuration"""
     try:
         response = requests.get(OPENID_CONFIG_URL)
         response.raise_for_status()
         openid_config = response.json()
         jwks_uri = openid_config['jwks_uri']
-
-        # Fetch the JWKS (JSON Web Key Set)
         jwks = requests.get(jwks_uri).json()
         return jwks['keys']
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=500, detail=f"Error fetching public keys: {e}")
 
 
-# Verify JWT token using Azure public keys
 def verify_token(token: str = Depends(oauth2_scheme)):
-    """Verify JWT token using Azure public keys"""
     try:
         if not token:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token is missing")
-        
-        # Debugging: Log the token to check if it's being received correctly
-        print(f"Received token: {token}")
 
         unverified_header = jwt.get_unverified_header(token)
         if unverified_header is None:
@@ -91,21 +92,14 @@ def verify_token(token: str = Depends(oauth2_scheme)):
         if not rsa_key:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unable to find appropriate key")
 
-        # Validate the JWT token's signature using the public key
         payload = jwt.decode(
             token,
             rsa_key,
             algorithms=["RS256"],
-            #audience=os.getenv("CLIENT_ID"),  # Your Azure Client ID (App ID)
-            #options={"verify_aud": False},
             options={"verify_signature": False, "verify_aud": False},
             issuer=f"https://login.microsoftonline.com/{os.getenv('TENANT_ID')}/v2.0"
         )
-        
-        # Debugging: Log the payload for verification
-        print(f"Token validated successfully. Payload: {payload}")
-        
-        return payload  # Return the decoded payload if valid
+        return payload
 
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
@@ -114,26 +108,33 @@ def verify_token(token: str = Depends(oauth2_scheme)):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Token verification failed: {str(e)}")
 
+# --- Models ---
 
-# ---- Models ----
 class ChatRequest(BaseModel):
     thread_id: str
     message: str
 
-
 class ThreadResponse(BaseModel):
     thread_id: str
-
 
 class ChatResponse(BaseModel):
     reply: str
 
-# ---- Health check ----
+# Orchestrator chat request with chat history
+class OrchestratorChatRequest(BaseModel):
+    thread_id: str
+    message: str
+    chat_history: List[Dict[str, str]]  # List of dicts with keys: 'role', 'content'
+
+class OrchestratorChatResponse(BaseModel):
+    action: str
+    result: str
+
+# Health check
 @app.get("/healthz")
 def healthz():
     return {"status": "ok"}
 
-# ---- Routes ----
 
 @app.post("/thread", response_model=ThreadResponse, status_code=status.HTTP_201_CREATED)
 def create_thread(token: str = Depends(verify_token)):
@@ -142,7 +143,7 @@ def create_thread(token: str = Depends(verify_token)):
         tid = assistant.create_thread()
         return ThreadResponse(thread_id=tid)
     except Exception as e:
-        traceback.print_exc()  # Log full error stack
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to create thread: {e}")
 
 
@@ -153,9 +154,36 @@ def chat(req: ChatRequest, token: str = Depends(verify_token)):
         reply = assistant.chat_on_thread(thread_id=req.thread_id, user_query=req.message)
         return ChatResponse(reply=reply)
     except Exception as e:
-        traceback.print_exc()  # Log full error stack
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Chat failed: {e}")
 
+
+# New endpoint for orchestrator thread creation
+@app.post("/orchestrator/thread", response_model=ThreadResponse, status_code=status.HTTP_201_CREATED)
+def create_orchestrator_thread(token: str = Depends(verify_token)):
+    try:
+        # For simplicity, use assistant thread creation (could be customized)
+        # Or manage distinct thread IDs if needed
+        tid = f"orch-{os.urandom(4).hex()}"  # generate random id for orchestrator session
+        return ThreadResponse(thread_id=tid)
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to create orchestrator thread: {e}")
+
+# Orchestrator chat endpoint
+@app.post("/orchestrator/chat", response_model=OrchestratorChatResponse)
+async def orchestrator_chat(req: OrchestratorChatRequest, token: str = Depends(verify_token)):
+    try:
+        orchestrator_agent = get_orchestrator_agent()
+        response = await orchestrator_agent.chat(
+            thread_id=req.thread_id,
+            user_message=req.message,
+            chat_history=req.chat_history,
+        )
+        return response
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Orchestrator chat failed: {e}")
 
 if __name__ == "__main__":
     import uvicorn

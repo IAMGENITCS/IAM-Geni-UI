@@ -5,10 +5,8 @@ import time
 import msal
 import os
 from dotenv import load_dotenv
-import streamlit.components.v1 as components
 import ast
 
-# Load environment variables
 load_dotenv()
 
 CLIENT_ID = os.getenv('CLIENT_ID')
@@ -19,9 +17,11 @@ API_BASE = "http://127.0.0.1:8000"
 REDIRECT_URI = "http://localhost:8501"
 logo_path = "tcs_logo.png"
 
+
 def initiate_login():
     app = msal.PublicClientApplication(CLIENT_ID, authority=AUTHORITY)
     return app.get_authorization_request_url(SCOPES, redirect_uri=REDIRECT_URI)
+
 
 def handle_token_response():
     code = st.query_params.get('code')
@@ -37,15 +37,18 @@ def handle_token_response():
         return token_response
     return None
 
+
 def get_image_base64(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode()
+
 
 st.set_page_config(page_title="IAM GENI", page_icon=logo_path, layout="wide")
 
 auth_url = initiate_login()
 azure_logout_url = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/logout?post_logout_redirect_uri={REDIRECT_URI}"
 
+# Original CSS for fixed header and footer
 st.markdown("""
 <style>
 .header-container {
@@ -65,13 +68,11 @@ st.markdown("""
     transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
-/* Shift header right when sidebar open on large screens */
 [data-testid="stSidebar"][aria-expanded="true"] ~ div .header-container {
     margin-left: 280px;
     width: calc(100% - 280px);
 }
 
-/* Adjust shift on medium screens */
 @media (max-width: 991px) {
     [data-testid="stSidebar"][aria-expanded="true"] ~ div .header-container {
         margin-left: 200px;
@@ -79,7 +80,6 @@ st.markdown("""
     }
 }
 
-/* On mobile, sidebar overlays, move header down */
 @media (max-width: 600px) {
     [data-testid="stSidebar"][aria-expanded="true"] ~ div .header-container {
         margin-left: 0;
@@ -100,13 +100,12 @@ st.markdown("""
     }
 }
 
-/* Styled login prompt below header */
 .main-content-logged-out {
     margin-top: 120px;
     text-align: center;
     font-size: 18px;
-    font-weight: 700; /* Bold */
-    color: #555555;    /* Greyish for visibility */
+    font-weight: 700;
+    color: #555555;
     padding: 10px 16px;
 }
 
@@ -207,6 +206,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+
 def render_header():
     is_authed = st.session_state.get("authenticated", False)
     if is_authed:
@@ -233,28 +233,37 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.sidebar.title("Navigation")
-chat_button = st.sidebar.button("Chat")
-about_button = st.sidebar.button("About IAM")
-rules_button = st.sidebar.button("Rules and Regulations")
 
-# Auth logic
+if "active_page" not in st.session_state:
+    st.session_state["active_page"] = "main_chat"
+
+
+st.sidebar.title("USECASES")
+if st.sidebar.button("Chat"):
+    st.session_state["active_page"] = "main_chat"
+
+if st.sidebar.button("Orchestrator Agent"):
+    st.session_state["active_page"] = "orchestrator_chat"
+
+if st.sidebar.button("About IAM"):
+    st.session_state["active_page"] = "about_iam"
+
+if st.sidebar.button("Rules and Regulations"):
+    st.session_state["active_page"] = "rules"
+
+
 if st.query_params.get("app_logout") == "1":
-    for k in ["authenticated", "access_token", "thread_id", "chat_history", "user_info"]:
+    for k in [
+        "authenticated", "access_token", "thread_id", "chat_history", "user_info",
+        "orch_thread_id", "orchestrator_chat_history", "active_page"
+    ]:
         st.session_state.pop(k, None)
     try:
         st.query_params.clear()
     except Exception:
         pass
-    components.html(f"""
-        <script>
-          try {{
-            window.open("{azure_logout_url}", "azure_signout_" + Date.now(), "popup,width=600,height=500");
-          }} catch (e) {{}}
-        </script>
-    """, height=0)
-    st.success("Logged out.")
     st.rerun()
+
 
 if "code" in st.query_params:
     with st.spinner("Finalizing sign-in..."):
@@ -263,6 +272,8 @@ if "code" in st.query_params:
             st.session_state["authenticated"] = True
             st.session_state["access_token"] = token_response.get("access_token")
             st.session_state["user_info"] = token_response.get("id_token_claims", {})
+            st.session_state.setdefault("orchestrator_chat_history", [])
+            st.session_state.setdefault("active_page", "main_chat")
             try:
                 st.query_params.clear()
             except Exception:
@@ -277,8 +288,10 @@ if "code" in st.query_params:
             except Exception:
                 pass
 
+
 def show_intro():
     st.markdown('<div class="centered-intro">Ask me anything about Identity and Access Management.</div>', unsafe_allow_html=True)
+
 
 def main_chat_page():
     if "access_token" not in st.session_state or not st.session_state["access_token"]:
@@ -343,23 +356,92 @@ def main_chat_page():
         st.session_state["chat_history"].append((user_input, reply))
         st.rerun()
 
+
+def orchestrator_chat_page():
+    if "access_token" not in st.session_state or not st.session_state["access_token"]:
+        st.error("Access token is not found or invalid.", icon="🚨")
+        return
+
+    if "orch_thread_id" not in st.session_state:
+        try:
+            headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+            r = requests.post(f"{API_BASE}/orchestrator/thread", timeout=60, headers=headers)
+            r.raise_for_status()
+            st.session_state["orch_thread_id"] = r.json()["thread_id"]
+        except Exception as e:
+            st.error(f"Failed to create orchestrator thread: {str(e)}", icon="🚨")
+            st.stop()
+
+    if "orchestrator_chat_history" not in st.session_state:
+        st.session_state["orchestrator_chat_history"] = []
+
+    container_class = "message-container no-messages" if len(st.session_state["orchestrator_chat_history"]) == 0 else "message-container"
+    st.markdown(f'<div class="{container_class}">', unsafe_allow_html=True)
+    if len(st.session_state["orchestrator_chat_history"]) == 0:
+        st.markdown('<div class="centered-intro">Welcome to the Orchestrator Agent. Ask provisioning or IAM questions here.</div>', unsafe_allow_html=True)
+
+    container = st.container()
+    for user_msg, agent_msg in st.session_state["orchestrator_chat_history"]:
+        with container:
+            with st.chat_message("user"):
+                st.markdown(f"**You:** {user_msg}")
+            with st.chat_message("assistant"):
+                st.markdown(f"**Orchestrator:** {agent_msg}")
+
+    prompt = st.chat_input("Say something to the orchestrator:")
+    if prompt:
+        user_input = prompt
+        with st.spinner("Thinking..."):
+            try:
+                headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+                payload = {
+                    "thread_id": st.session_state["orch_thread_id"],
+                    "message": user_input,
+                    "chat_history": [
+                        {"role": "user", "content": um} if i % 2 == 0 else {"role": "assistant", "content": am}
+                        for i, (um, am) in enumerate(st.session_state["orchestrator_chat_history"])
+                    ],
+                }
+                r = requests.post(f"{API_BASE}/orchestrator/chat", json=payload, timeout=120, headers=headers)
+                r.raise_for_status()
+                reply = r.json().get("result", "")
+            except Exception as e:
+                reply = "**Orchestrator is currently busy, please try again later.**"
+        typing_placeholder = st.empty()
+        typing_message = ""
+        for char in reply:
+            typing_message += char
+            typing_placeholder.markdown(f"**Orchestrator**: {typing_message}")
+            time.sleep(0.01)
+        st.session_state["orchestrator_chat_history"].append((user_input, reply))
+        st.rerun()
+
+
 def about_iam():
-    st.write("**About IAM**")
+    st.markdown('<div style="margin-top: 100px;"></div>', unsafe_allow_html=True)
+    st.markdown("### About IAM")
     st.write("Identity and Access Management (IAM) is a framework of policies and technologies that ensure the right individuals have appropriate access to technology resources.")
 
+
 def rules_and_regulations():
-    st.write("**Rules and Regulations**")
+    st.markdown('<div style="margin-top: 100px;"></div>', unsafe_allow_html=True)
+    st.markdown("### Rules and Regulations")
     st.write("1. Only authorized users can access the system.")
     st.write("2. Users must follow the company's security guidelines.")
     st.write("3. All actions performed in the system must be logged.")
     st.write("4. MFA must be enabled for sensitive areas.")
 
+
 if st.session_state.get("authenticated", False):
-    if chat_button:
+    active_page = st.session_state.get("active_page", "main_chat")
+
+    if active_page == "main_chat":
         main_chat_page()
-    elif about_button:
+    elif active_page == "orchestrator_chat":
+        orchestrator_chat_page()
+    elif active_page == "about_iam":
         about_iam()
-    elif rules_button:
+    elif active_page == "rules":
         rules_and_regulations()
     else:
         main_chat_page()
