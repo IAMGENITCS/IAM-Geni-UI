@@ -6,6 +6,7 @@ import msal
 import os
 from dotenv import load_dotenv
 import ast
+import json  # ← added
 
 load_dotenv()
 
@@ -357,6 +358,55 @@ def main_chat_page():
         st.rerun()
 
 
+# ---------- Helper: render structured (JSON) or plain text for Orchestrator ----------
+def _render_result_as_table_or_text(result_str: str, role_label: str = "Orchestrator"):
+    """
+    Detects JSON returned by the ProvisioningAgent and renders as a table.
+    Falls back to plain text if not JSON.
+    """
+    # Try to parse JSON
+    try:
+        parsed = json.loads(result_str)
+    except Exception:
+        parsed = None
+
+    if isinstance(parsed, list):
+        if len(parsed) == 0:
+            st.info("No rows.")
+            return
+        # list of dicts or list of scalars
+        try:
+            import pandas as pd
+            if isinstance(parsed[0], dict):
+                st.dataframe(pd.DataFrame(parsed), use_container_width=True)
+            else:
+                st.dataframe(pd.DataFrame(parsed, columns=["Value"]), use_container_width=True)
+        except Exception:
+            # pandas not available -> fallback
+            st.table(parsed)
+    elif isinstance(parsed, dict):
+        # Special handling for {"count": N, "groups": [...]}
+        if "groups" in parsed and isinstance(parsed["groups"], list):
+            st.markdown(f"**Total:** {parsed.get('count', len(parsed['groups']))}")
+            try:
+                import pandas as pd
+                groups = parsed["groups"]
+                if groups and isinstance(groups[0], dict):
+                    st.dataframe(pd.DataFrame(groups), use_container_width=True)
+                else:
+                    st.table(groups)
+            except Exception:
+                st.table(parsed["groups"])
+        else:
+            try:
+                import pandas as pd
+                st.dataframe(pd.DataFrame([parsed]), use_container_width=True)
+            except Exception:
+                st.json(parsed)
+    else:
+        st.markdown(f"**{role_label}**: {result_str}")
+
+
 def orchestrator_chat_page():
     if "access_token" not in st.session_state or not st.session_state["access_token"]:
         st.error("Access token is not found or invalid.", icon="🚨")
@@ -386,7 +436,8 @@ def orchestrator_chat_page():
             with st.chat_message("user"):
                 st.markdown(f"**You:** {user_msg}")
             with st.chat_message("assistant"):
-                st.markdown(f"**Orchestrator:** {agent_msg}")
+                # Re-render previous messages as table if they were JSON rows
+                _render_result_as_table_or_text(agent_msg, role_label="Orchestrator")
 
     prompt = st.chat_input("Say something to the orchestrator:")
     if prompt:
@@ -407,12 +458,27 @@ def orchestrator_chat_page():
                 reply = r.json().get("result", "")
             except Exception as e:
                 reply = "**Orchestrator is currently busy, please try again later.**"
-        typing_placeholder = st.empty()
-        typing_message = ""
-        for char in reply:
-            typing_message += char
-            typing_placeholder.markdown(f"**Orchestrator**: {typing_message}")
-            time.sleep(0.01)
+
+        # Decide how to render the new reply
+        is_structured = False
+        try:
+            parsed = json.loads(reply)
+            is_structured = isinstance(parsed, (list, dict))
+        except Exception:
+            is_structured = False
+
+        with st.chat_message("assistant"):
+            if is_structured:
+                _render_result_as_table_or_text(reply, role_label="Orchestrator")
+            else:
+                typing_placeholder = st.empty()
+                typing_message = ""
+                for char in reply:
+                    typing_message += char
+                    typing_placeholder.markdown(f"**Orchestrator**: {typing_message}")
+                    time.sleep(0.01)
+
+        # Store the raw reply string; renderer will handle table/text on refresh
         st.session_state["orchestrator_chat_history"].append((user_input, reply))
         st.rerun()
 
