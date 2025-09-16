@@ -4,14 +4,15 @@ import requests
 from dotenv import load_dotenv
 from semantic_kernel.functions import kernel_function
 from azure.identity import DefaultAzureCredential
-
+from azure.identity import AzureCliCredential
 load_dotenv()
 
 class ProvisioningAgent:
     def __init__(self):
         print("🔧 Initializing Provisioning Agent...")
         # Acquire token for Graph
-        self.credential = DefaultAzureCredential()
+        #self.credential = DefaultAzureCredential()
+        self.credential = AzureCliCredential()
         token = self.credential.get_token("https://graph.microsoft.com/.default")
         self._headers = {
             "Authorization": f"Bearer {token.token}",

@@ -44,12 +44,12 @@ def get_image_base64(image_path):
         return base64.b64encode(image_file.read()).decode()
 
 
-st.set_page_config(page_title="IAM GENI", page_icon=logo_path, layout="wide")
+st.set_page_config(page_title="Geni - Identity and Access Management  Agentic AI Service", page_icon=logo_path, layout="wide")
 
 auth_url = initiate_login()
 azure_logout_url = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/logout?post_logout_redirect_uri={REDIRECT_URI}"
 
-# Original CSS for fixed header and footer
+# Original CSS for fixed header and footer and general styling (removed theme-specific rules)
 st.markdown("""
 <style>
 .header-container {
@@ -204,6 +204,99 @@ st.markdown("""
 .st-emotion-cache-zy6yx3 {
     padding: 2rem 1rem 4rem !important;
 }
+
+/* Sidebar generic styles — DEFAULT/WHITE look */
+section[data-testid="stSidebar"] button {
+    display: block;
+    width: 100%;
+    padding: 1px 8px;
+    text-align: left;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #e5e5e5 !important;   /* white background */
+    color: #111 !important;           /* dark text */
+    border: 1px solid transparent;    /* no visible border by default */
+    box-shadow: none;
+}
+section[data-testid="stSidebar"] button:hover {
+    background: #f5f7fb !important;   /* subtle light hover */
+    color: #111 !important;
+}
+
+
+/* Profile box + hover card */
+section[data-testid="stSidebar"] .profile-box {
+    position: fixed;
+    bottom: 20px;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 230px;
+    z-index: 9999;
+    cursor: pointer;
+}
+section[data-testid="stSidebar"] .profile-initials {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+section[data-testid="stSidebar"] .profile-details {
+    font-size: 13px;
+    overflow: hidden;
+    max-width: 160px;
+    word-break: break-word;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+section[data-testid="stSidebar"] .profile-displayname {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 150px;
+    margin-bottom: 0;
+    line-height: 1.1;
+    font-weight: bold;
+}
+section[data-testid="stSidebar"] .profile-email {
+    font-size: 11px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 150px;
+    margin-top: 0;
+    line-height: 1.1;
+}
+
+section[data-testid="stSidebar"] .hover-card {
+    display: none;
+    position: fixed;
+    bottom: 60px;
+    left: 12px;
+    width: 260px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    padding: 10px;
+    font-size: 13px;
+    z-index: 999999 !important;
+    background: #fff;
+}
+section[data-testid="stSidebar"] .profile-box:hover ~ .hover-card {
+    display: block;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -218,7 +311,7 @@ def render_header():
     <div class="header-container">
         <div class="header-left">
             <img src="data:image/png;base64,{get_image_base64(logo_path)}" alt="TCS Logo" />
-            <p class="header-title">IAM GENI</p>
+            <p class="header-title">Geni - Identity and Access Management  Agentic AI Service</p>
         </div>
         <div class="header-right">
             {auth_btn_html}
@@ -238,19 +331,97 @@ st.markdown("""
 if "active_page" not in st.session_state:
     st.session_state["active_page"] = "main_chat"
 
+# ---------- Helper: Sidebar Button with Active State ----------
+def sidebar_button(label, page_name):
+    # Check if this button is the active page
+    active = st.session_state.get("active_page") == page_name
 
-st.sidebar.title("USECASES")
-if st.sidebar.button("Chat"):
-    st.session_state["active_page"] = "main_chat"
+    # Normal Streamlit button (unique key)
+    if st.sidebar.button(label, key=page_name):
+        st.session_state["active_page"] = page_name
+        st.rerun()  # rerun to update highlight
 
-if st.sidebar.button("Orchestrator Agent"):
-    st.session_state["active_page"] = "orchestrator_chat"
+    # Inject CSS to make inactive buttons white and active one subtly highlighted
+    # Inactive: white bg, dark text. Active: very light blue bg, dark text, subtle left border.
+    bg_inactive = "#ffffff"
+    bg_active = "#eaf3ff"   # very light blue for active (subtle)
+    text_color = "#111111"
+    left_border = "4px solid #007bff" if active else "4px solid transparent"
 
-if st.sidebar.button("About IAM"):
-    st.session_state["active_page"] = "about_iam"
+    st.sidebar.markdown(f"""
+    <style>
+    /* target the actual button element Streamlit renders (wrapper div present) */
+    div.stButton > button[key="{page_name}"] {{
+        background: {bg_active if active else bg_inactive} !important;
+        color: {text_color} !important;
+        width: 100%;
+        text-align: left;
+        padding: 8px 12px;
+        margin-bottom: 6px;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        box-shadow: none;
+        border-left: {left_border} !important;
+    }}
+    div.stButton > button[key="{page_name}"]:hover {{
+        background: #f5f7fb !important;
+        color: {text_color} !important;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
 
-if st.sidebar.button("Rules and Regulations"):
-    st.session_state["active_page"] = "rules"
+
+if 'authenticated' not in st.session_state:
+    st.session_state['authenticated'] = False
+if 'user_info' not in st.session_state:
+    st.session_state['user_info'] = {
+        'name': 'Pradeep Vishwakarma',
+        'preferred_username': 'pradeep.vishwakarma@example.com'
+    }
+
+if st.session_state.get("authenticated", False):
+    sidebar_button("Assistant for End users", "main_chat")
+    sidebar_button("Assistant for IAM Admin users", "orchestrator_chat")
+    sidebar_button("Entra ID Assistant", "entra_id_assistant")
+    sidebar_button("Active Directory Assistant", "active_directory_assistant")
+    sidebar_button("IAM Metrics Dashboard", "iam_metrics_dashboard")
+
+    user_info = st.session_state.get("user_info", {})
+
+    def render_sidebar_profile(user_info: dict):
+        """
+        Render the fixed, hoverable profile box in the sidebar.
+        """
+        display_name = user_info.get("name", "User")
+        email = user_info.get("preferred_username", "user@example.com")
+        role = user_info.get("role", "Employee")
+
+        initials = "".join([part[0].upper() for part in display_name.split()[:2]])
+
+        # HTML structure injected into the sidebar
+        st.sidebar.markdown(f"""
+        <div class="profile-box">
+            <div class="profile-initials">{initials}</div>
+            <div class="profile-details">
+                <strong class="profile-displayname">{display_name}</strong>
+                <span class="profile-email" title="{email}">{email}</span>
+            </div>
+        </div>
+
+        <div class="hover-card">
+            <strong>Username:</strong> {display_name}<br/>
+            <strong>Email:</strong> {email}<br/>
+            <strong>Role:</strong> {role}<br/>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # render the profile once
+    render_sidebar_profile(user_info)
+
+else:
+    st.sidebar.title("Welcome")
+    st.sidebar.write("Please log in to access the IAM Assistant features.")
 
 
 if st.query_params.get("app_logout") == "1":
@@ -291,7 +462,7 @@ if "code" in st.query_params:
 
 
 def show_intro():
-    st.markdown('<div class="centered-intro">Ask me anything about Identity and Access Management.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="centered-intro">You are using “Assistant for End users” functionality​</div>', unsafe_allow_html=True)
 
 
 def main_chat_page():
@@ -302,7 +473,7 @@ def main_chat_page():
     if "thread_id" not in st.session_state:
         try:
             headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
-            r = requests.post(f"{API_BASE}/thread", timeout=60, headers=headers)
+            r = requests.post(f"{API_BASE}/thread", timeout=120, headers=headers)
             r.raise_for_status()
             st.session_state["thread_id"] = r.json()["thread_id"]
         except Exception as e:
@@ -326,14 +497,14 @@ def main_chat_page():
                 st.markdown(f"**IAM Assistant:** {agent_msg}")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    prompt = st.chat_input("Say something:")
+    prompt = st.chat_input("Hi there! Geni is ready to help you on IAM – start using me")
     if prompt:
         user_input = prompt
         with st.spinner("Thinking..."):
             try:
                 headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
                 payload = {"thread_id": st.session_state["thread_id"], "message": user_input}
-                r = requests.post(f"{API_BASE}/chat", json=payload, timeout=60, headers=headers)
+                r = requests.post(f"{API_BASE}/chat", json=payload, timeout=120, headers=headers)
                 r.raise_for_status()
                 reply = r.json().get("reply", "")
                 if isinstance(reply, dict) and reply.get('code') == 'server_error':
@@ -364,6 +535,40 @@ def _render_result_as_table_or_text(result_str: str, role_label: str = "Orchestr
     Detects JSON returned by the ProvisioningAgent and renders as a table.
     Falls back to plain text if not JSON.
     """
+
+    # Inject table-friendly CSS (static colors retained)
+    st.markdown("""
+    <style>
+    .stTable td, .stTable th {
+        background-color: #1e1e1e !important;
+        color: #f0f0f0 !important;
+        border: 1px solid #444 !important;
+    }
+    .stTable th {
+        background-color: #333 !important;
+        font-weight: bold !important;
+    }
+    div[data-testid="stDataFrame"] {
+        background-color: #1e1e1e !important;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    div[data-testid="stDataFrame"] table {
+        color: #f0f0f0 !important;
+    }
+    div[data-testid="stDataFrame"] thead {
+        background-color: #333 !important;
+        color: #fff !important;
+    }
+    div[data-testid="stDataFrame"] tbody tr:nth-child(odd) {
+        background-color: #2a2a2a !important;
+    }
+    div[data-testid="stDataFrame"] tbody tr:nth-child(even) {
+        background-color: #1e1e1e !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     # Try to parse JSON
     try:
         parsed = json.loads(result_str)
@@ -374,7 +579,6 @@ def _render_result_as_table_or_text(result_str: str, role_label: str = "Orchestr
         if len(parsed) == 0:
             st.info("No rows.")
             return
-        # list of dicts or list of scalars
         try:
             import pandas as pd
             if isinstance(parsed[0], dict):
@@ -382,10 +586,8 @@ def _render_result_as_table_or_text(result_str: str, role_label: str = "Orchestr
             else:
                 st.dataframe(pd.DataFrame(parsed, columns=["Value"]), use_container_width=True)
         except Exception:
-            # pandas not available -> fallback
             st.table(parsed)
     elif isinstance(parsed, dict):
-        # Special handling for {"count": N, "groups": [...]}
         if "groups" in parsed and isinstance(parsed["groups"], list):
             st.markdown(f"**Total:** {parsed.get('count', len(parsed['groups']))}")
             try:
@@ -407,6 +609,7 @@ def _render_result_as_table_or_text(result_str: str, role_label: str = "Orchestr
         st.markdown(f"**{role_label}**: {result_str}")
 
 
+# ---------- Orchestrator Chat Page ----------
 def orchestrator_chat_page():
     if "access_token" not in st.session_state or not st.session_state["access_token"]:
         st.error("Access token is not found or invalid.", icon="🚨")
@@ -428,7 +631,7 @@ def orchestrator_chat_page():
     container_class = "message-container no-messages" if len(st.session_state["orchestrator_chat_history"]) == 0 else "message-container"
     st.markdown(f'<div class="{container_class}">', unsafe_allow_html=True)
     if len(st.session_state["orchestrator_chat_history"]) == 0:
-        st.markdown('<div class="centered-intro">Welcome to the Orchestrator Agent. Ask provisioning or IAM questions here.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="centered-intro">You are using “Assistant for Admin users” functionality</div>', unsafe_allow_html=True)
 
     container = st.container()
     for user_msg, agent_msg in st.session_state["orchestrator_chat_history"]:
@@ -436,10 +639,9 @@ def orchestrator_chat_page():
             with st.chat_message("user"):
                 st.markdown(f"**You:** {user_msg}")
             with st.chat_message("assistant"):
-                # Re-render previous messages as table if they were JSON rows
                 _render_result_as_table_or_text(agent_msg, role_label="Orchestrator")
 
-    prompt = st.chat_input("Say something to the orchestrator:")
+    prompt = st.chat_input("Hi there! Geni is ready to help you on IAM – start using me")
     if prompt:
         user_input = prompt
         with st.spinner("Thinking..."):
@@ -459,7 +661,6 @@ def orchestrator_chat_page():
             except Exception as e:
                 reply = "**Orchestrator is currently busy, please try again later.**"
 
-        # Decide how to render the new reply
         is_structured = False
         try:
             parsed = json.loads(reply)
@@ -478,7 +679,6 @@ def orchestrator_chat_page():
                     typing_placeholder.markdown(f"**Orchestrator**: {typing_message}")
                     time.sleep(0.01)
 
-        # Store the raw reply string; renderer will handle table/text on refresh
         st.session_state["orchestrator_chat_history"].append((user_input, reply))
         st.rerun()
 
@@ -512,4 +712,14 @@ if st.session_state.get("authenticated", False):
     else:
         main_chat_page()
 else:
-    st.markdown('<div class="main-content-logged-out">Please log in to access the IAM Assistant.</div>', unsafe_allow_html=True)
+    st.markdown("""
+<div style="display:flex; justify-content:center; align-items:center; height:80vh; text-align:center; font-size:18px; line-height:1.6;">
+    <div>
+        Ask any thing on Identity and Access Management
+        <br>
+        Click the links on the left side to understand more on how these assistants can help you
+        <br>
+        Login if you want to start using them!
+    </div>
+</div>
+""", unsafe_allow_html=True)
