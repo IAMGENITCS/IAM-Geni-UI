@@ -81,7 +81,7 @@ Always ensure the responses are professional and accurate.
         print("✅ IAM Assistant ready.\n")
  
     @kernel_function(description="Answer IAM-related questions using documentation.")
-
+    
     async def answer_iam_question(self, question: str) -> str:
 
         """
@@ -99,18 +99,27 @@ Always ensure the responses are professional and accurate.
             content=question,
 
         )
- 
-        run = self.project_client.agents.create_and_process_run(
+        try:
+            run =  await self.project_client.agents.create_and_process_run(
 
             thread_id=self.thread.id,
 
             assistant_id=self.iam_agent.id
 
         )
- 
-        if run.status == "failed":
+        except Exception as e:
+            return f"❌ Run failed with exception: {e}"
+        # run = self.project_client.agents.create_and_process_run(
 
-            return f"❌ Run failed: {run.last_error}"
+        #     thread_id=self.thread.id,
+
+        #     assistant_id=self.iam_agent.id
+
+        # )
+ 
+        # if run.status == "failed":
+
+        #     return f"❌ Run failed: {run.last_error}"
  
         messages = self.project_client.agents.list_messages(thread_id=self.thread.id)
 

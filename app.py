@@ -566,6 +566,7 @@ def render_header():
         <div class="header-left">
             <img src="data:image/png;base64,{get_image_base64(logo_path)}" alt="TCS Logo" />
             <p class="header-title">Geni - Identity and Access Management  Agentic AI Service</p>
+            <p class="header-title">Geni - Identity and Access Management  Agentic AI Service</p>
         </div>
         <div class="header-right">
             {auth_btn_html}
@@ -796,6 +797,7 @@ def main_chat_page():
         try:
             headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
             r = requests.post(f"{API_BASE}/thread", timeout=120, headers=headers)
+            r = requests.post(f"{API_BASE}/thread", timeout=120, headers=headers)
             r.raise_for_status()
             st.session_state["thread_id"] = r.json()["thread_id"]
         except Exception as e:
@@ -1017,6 +1019,7 @@ def orchestrator_chat_page():
                 _render_result_as_table_or_text(agent_msg, role_label="Orchestrator")
 
     prompt = st.chat_input("Hi there! Geni is ready to help you on IAM – start using me")
+    prompt = st.chat_input("Hi there! Geni is ready to help you on IAM – start using me")
     if prompt:
         user_input = prompt
         with st.spinner("Thinking..."):
@@ -1084,6 +1087,17 @@ if st.session_state.get("authenticated", False):
     else:
         main_chat_page()
 else:
+    st.markdown("""
+<div style="display:flex; justify-content:center; align-items:center; height:80vh; text-align:center; font-size:18px; line-height:1.6;">
+    <div>
+        Ask any thing on Identity and Access Management
+        <br>
+        Click the links on the left side to understand more on how these assistants can help you
+        <br>
+        Login if you want to start using them!
+    </div>
+</div>
+""", unsafe_allow_html=True)
     st.markdown("""
 <div style="display:flex; justify-content:center; align-items:center; height:80vh; text-align:center; font-size:18px; line-height:1.6;">
     <div>
