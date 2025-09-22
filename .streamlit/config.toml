@@ -1,0 +1,4 @@
+[client]
+toolbarMode = "viewer"
+[theme]
+base = "dark"

@@ -283,13 +283,11 @@ section[data-testid="stSidebar"] .hover-card {
     left: 12px;
     width: 260px;
     border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.75); /* stronger shadow for dark mode */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
     padding: 10px;
     font-size: 13px;
     z-index: 999999 !important;
-    background: #222 !important;    /* dark background */
-    color: #fafafa !important;      /* light text */
-    border: 1px solid #444 !important;
+    background: #fff;
 }
 section[data-testid="stSidebar"] .profile-box:hover ~ .hover-card {
     display: block;
@@ -634,10 +632,10 @@ if 'user_info' not in st.session_state:
 
 if st.session_state.get("authenticated", False):
     sidebar_button("Assistant for End users", "main_chat")
-    sidebar_button("Assistant for IAM Admin", "orchestrator_chat")
-    sidebar_button("Microsoft Entra Service", "entra_id_assistant")
-    sidebar_button("Active Directory Service", "active_directory_assistant")
-    sidebar_button("IAM Dashboard & Reports", "iam_metrics_dashboard")
+    sidebar_button("Assistant for IAM Admin users", "orchestrator_chat")
+    sidebar_button("Entra ID Assistant", "entra_id_assistant")
+    sidebar_button("Active Directory Assistant", "active_directory_assistant")
+    sidebar_button("IAM Metrics Dashboard", "iam_metrics_dashboard")
 
     user_info = st.session_state.get("user_info", {})
 

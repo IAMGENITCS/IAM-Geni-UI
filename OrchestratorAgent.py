@@ -96,7 +96,7 @@ The user will either ask an IAM related query, or ask you to perform an IAM prov
 -If user asks to list all users or user's intent is to list all users:
   - call the ProvisioningAgent to get the list of users.
   -Return the entire plugin response and print the output as it is to the user.
-  - give the users list even if the output is in json or not.
+  - give the users list ouput in json.
 -If user asks to Create a group or user's intent is to create group:
   - Ask the user for group display Name.
   - Ask the user the Mail Nickname.
@@ -123,7 +123,7 @@ The user will either ask an IAM related query, or ask you to perform an IAM prov
  - Only call the ProvisioningAgent when you collect the group id.
 -If user asks to list Groups or user's intent is to list groups:
   - Ask the user the number of groups they want to be listed.
-  - give the group list even if the output is in json or not 
+  - give the group list in json 
   - call Provisioning agent to retrieve the list of groups with group display name and ID
   - Return the entire plugin response and print the output as it is to the user.
   - only call the ProvisioningAgent when you have the number of groups they want to get listed. 
@@ -132,7 +132,7 @@ The user will either ask an IAM related query, or ask you to perform an IAM prov
   - Only call the ProvisioningAgent when you collect the group id.
 -If user asks to show/list ownerless Groups or user's intent is to list/show ownerless groups:
   - Ask the user the number of groups they want to be listed.
-  - give the group list even if the output is in json or not 
+  - give the group list in json 
   - call Provisioning agent to retrieve the list of groups with group display name and ID
   - Return the entire plugin response and print the output as it is to the user.
   - only call the ProvisioningAgent when you have the number of groups they want to get listed. 
@@ -144,7 +144,7 @@ The user will either ask an IAM related query, or ask you to perform an IAM prov
   "action": "provision",
   "result": "<plugin response>"
 }
-**Note: If the plugin returns a list (e.g., users or groups), include the entire list in the `result` field as a string.
+**Note: If the plugin returns a list (e.g., users or groups), include the entire list in the `result` field as a json.
 - Do not add commentary, markdown formatting, or extra explanation.
 - Do not summarize the plugin response. Return it exactly as received.
 """,

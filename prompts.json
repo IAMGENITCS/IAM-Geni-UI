@@ -1,0 +1,13 @@
+{
+    "prompts": [
+        "How to raise an access request ? ",
+        "What is Self Service Password Reset", 
+        "steps to reset password in Entra ID? ",
+        "How to setup MFA in Entra ID?        ",
+        "How to manage user roles in Azure AD?",
+        "What is Conditional Access in Entra ID?",
+        "How to configure SSO for applications? ",
+        "What are the best practices for IAM?   ",
+        "Application registration in Entra ID?  "
+    ]
+}
