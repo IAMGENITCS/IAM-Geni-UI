@@ -3,3 +3,7 @@ venv/
 __pycache__/
 testldap.py
 AD_provisioningAgent.py
+app_backup.py
+app_backup2.py
+AD_provisioningAgentBackup.py
+agent_servicebackup.py

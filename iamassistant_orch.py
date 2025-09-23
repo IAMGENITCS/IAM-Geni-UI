@@ -45,7 +45,7 @@ class IAMAssistant:
  
         # Configure Azure AI Search Tool
 
-        self.ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="iam-docs-rag")
+        self.ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="admin-user-rag")
  
         # Create IAM agent
 
@@ -57,7 +57,7 @@ class IAMAssistant:
 
             instructions="""
             You are an expert assistant focused exclusively on assisting users with tasks related to Identity and Access Management in Entra ID. 
-You should ONLY use the provided IAM documentation for answering user queries from "tool_resources" (iam-docs-rag). When asked a query:
+You should ONLY use the provided IAM documentation for answering user queries from "tool_resources" (admin-user-rag). When asked a query:
  
 1. **Search the documentation**: Use the "ai search tool" to retrieve relevant content from the IAM documentation for the user query.
 2. **No external sources**: Do not use the web or any external sources to generate answers.

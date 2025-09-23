@@ -45,7 +45,7 @@ st.set_page_config(page_title="Geni - Identity and Access Management  Agentic AI
 auth_url = initiate_login()
 azure_logout_url = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/logout?post_logout_redirect_uri={REDIRECT_URI}"
 
-# AGGRESSIVE CSS with BULLETPROOF UNIFORM FIXED SIZE prompts styling
+# AGGRESSIVE CSS with BULLETPROOF UNIFORM FIXED SIZE prompts styling + Entra Service styles
 st.markdown("""
 <style>
 .header-container {
@@ -201,6 +201,61 @@ st.markdown("""
     padding: 2rem 1rem 4rem !important;
 }
 
+/* Entra Service specific styles */
+.quick-actions-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.quick-action-btn {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #dee2e6;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 150px;
+    text-align: center;
+}
+
+.quick-action-btn:hover {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+}
+
+.operation-status {
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-weight: 600;
+}
+
+.status-running {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+}
+
+.status-success {
+    background-color: #d1e7dd;
+    border-left: 4px solid #198754;
+    color: #0f5132;
+}
+
+.status-error {
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+}
+
 /* Sidebar generic styles — DEFAULT/WHITE look */
 section[data-testid="stSidebar"] button {
     display: block;
@@ -283,16 +338,24 @@ section[data-testid="stSidebar"] .hover-card {
     left: 12px;
     width: 260px;
     border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.75);
     padding: 10px;
     font-size: 13px;
     z-index: 999999 !important;
-    background: #fff;
+    background: #222 !important;
+    color: #fafafa !important;
+    border: 1px solid #444 !important;
 }
 section[data-testid="stSidebar"] .profile-box:hover ~ .hover-card {
     display: block;
 }
 
+/* Tables/DataFrames styling for dark mode */
+.stTable, .stDataFrame {
+    background-color: #1e1e1e !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
 .stTable td, .stTable th {
     background-color: #1e1e1e !important;
     color: #f0f0f0 !important;
@@ -622,6 +685,37 @@ def sidebar_button(label, page_name):
     </style>
     """, unsafe_allow_html=True)
 
+# NEW: Disabled Sidebar Button for Non-Authenticated Users
+def sidebar_button_disabled(label, page_name):
+    """
+    Sidebar button that shows login message when clicked by non-authenticated users
+    """
+    if st.sidebar.button(label, key=f"{page_name}_disabled"):
+        st.sidebar.warning("🔒 Please log in to access this feature!")
+        st.sidebar.info("👆 Click the Login button in the top-right corner.")
+    
+    # Apply styling to look like normal buttons but slightly muted
+    st.sidebar.markdown(f"""
+    <style>
+    div.stButton > button[key="{page_name}_disabled"] {{
+        background: #e9ecef !important;
+        color: #495057 !important;
+        width: 100%;
+        text-align: left;
+        padding: 8px 12px;
+        margin-bottom: 6px;
+        border-radius: 8px;
+        font-weight: 600;
+        border: 1px solid #ced4da !important;
+        box-shadow: none;
+    }}
+    div.stButton > button[key="{page_name}_disabled"]:hover {{
+        background: #f8f9fa !important;
+        color: #495057 !important;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
 if 'user_info' not in st.session_state:
@@ -630,12 +724,14 @@ if 'user_info' not in st.session_state:
         'preferred_username': 'pradeep.vishwakarma@example.com'
     }
 
+# UPDATED SIDEBAR LOGIC
 if st.session_state.get("authenticated", False):
+    st.sidebar.markdown('<div style="height: 15vh;"></div>', unsafe_allow_html=True)
     sidebar_button("Assistant for End users", "main_chat")
-    sidebar_button("Assistant for IAM Admin users", "orchestrator_chat")
-    sidebar_button("Entra ID Assistant", "entra_id_assistant")
-    sidebar_button("Active Directory Assistant", "active_directory_assistant")
-    sidebar_button("IAM Metrics Dashboard", "iam_metrics_dashboard")
+    sidebar_button("Assistant for IAM Admin", "orchestrator_chat")
+    sidebar_button("Microsoft Entra Service", "entra_id_assistant")
+    sidebar_button("Active Directory Service", "active_directory_assistant")
+    sidebar_button("IAM Dashboard & Reports", "iam_metrics_dashboard")
 
     user_info = st.session_state.get("user_info", {})
 
@@ -672,12 +768,27 @@ if st.session_state.get("authenticated", False):
 else:
     st.sidebar.title("Welcome")
     st.sidebar.write("Please log in to access the IAM Assistant features.")
+    
+    # Add some spacing
+    st.sidebar.markdown('<div style="height: 2vh;"></div>', unsafe_allow_html=True)
+    
+    # Show disabled navigation buttons
+    sidebar_button_disabled("Assistant for End users", "main_chat")
+    sidebar_button_disabled("Assistant for IAM Admin", "orchestrator_chat") 
+    sidebar_button_disabled("Microsoft Entra Service", "entra_id_assistant")
+    sidebar_button_disabled("Active Directory Service", "active_directory_assistant")
+    sidebar_button_disabled("IAM Dashboard & Reports", "iam_metrics_dashboard")
+    
+    # Add informational message
+    st.sidebar.markdown('<div style="margin-top: 20px; font-size: 12px; color: #666; font-style: italic;">Login to enable these features</div>', unsafe_allow_html=True)
 
+# Handle logout - UPDATED with Entra variables
 if st.query_params.get("app_logout") == "1":
     for k in [
         "authenticated", "access_token", "thread_id", "chat_history", "user_info",
         "orch_thread_id", "orchestrator_chat_history", "active_page", "selected_prompt", 
-        "chat_input_value", "last_input", "original_prompt_value"
+        "chat_input_value", "last_input", "original_prompt_value", "entra_thread_id", 
+        "entra_chat_history", "show_user_input", "show_group_input", "show_create_user_form"
     ]:
         st.session_state.pop(k, None)
     try:
@@ -1055,6 +1166,177 @@ def orchestrator_chat_page():
         st.session_state["orchestrator_chat_history"].append((user_input, reply))
         st.rerun()
 
+# NEW: Entra Service Page
+def entra_service_page():
+    """Microsoft Entra Service chat interface"""
+    if "access_token" not in st.session_state or not st.session_state["access_token"]:
+        st.error("Access token is not found or invalid.", icon="🚨")
+        return
+
+    if "entra_thread_id" not in st.session_state:
+        st.session_state["entra_thread_id"] = f"entra-{int(time.time())}"
+
+    if "entra_chat_history" not in st.session_state:
+        st.session_state["entra_chat_history"] = []
+
+    container_class = "message-container no-messages" if len(st.session_state["entra_chat_history"]) == 0 else "message-container"
+    st.markdown(f'<div class="{container_class}">', unsafe_allow_html=True)
+    
+    if len(st.session_state["entra_chat_history"]) == 0:
+        st.markdown('<div class="centered-intro">🔐 Microsoft Entra Service - Direct IAM Operations</div>', unsafe_allow_html=True)
+        
+        # Add quick action buttons
+        st.markdown("### Quick Actions")
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            if st.button("📋 List All Users", key="list_users_btn"):
+                process_entra_command("list all users")
+        
+        with col2:
+            if st.button("👥 List All Groups", key="list_groups_btn"):
+                process_entra_command("list all groups")
+        
+        with col3:
+            if st.button("ℹ️ Get User Details", key="user_details_btn"):
+                st.session_state["show_user_input"] = True
+                st.rerun()
+        
+        # Additional action buttons
+        col4, col5, col6 = st.columns(3)
+        
+        with col4:
+            if st.button("📊 List Top 10 Users", key="list_top_users_btn"):
+                process_entra_command("list top 10 users")
+        
+        with col5:
+            if st.button("🔍 Group Details", key="group_details_btn"):
+                st.session_state["show_group_input"] = True
+                st.rerun()
+        
+        with col6:
+            if st.button("🆕 Create User", key="create_user_btn"):
+                st.session_state["show_create_user_form"] = True
+                st.rerun()
+        
+        # Show input forms if requested
+        if st.session_state.get("show_user_input", False):
+            with st.form("user_details_form"):
+                user_email = st.text_input("Enter user email or ID:")
+                if st.form_submit_button("Get Details"):
+                    if user_email:
+                        process_entra_command(f"get details for user {user_email}")
+                        st.session_state["show_user_input"] = False
+                        st.rerun()
+        
+        if st.session_state.get("show_group_input", False):
+            with st.form("group_details_form"):
+                group_id = st.text_input("Enter group ID or name:")
+                if st.form_submit_button("Get Group Details"):
+                    if group_id:
+                        process_entra_command(f"get details for group {group_id}")
+                        st.session_state["show_group_input"] = False
+                        st.rerun()
+        
+        if st.session_state.get("show_create_user_form", False):
+            with st.form("create_user_form"):
+                st.markdown("#### Create New User")
+                display_name = st.text_input("Display Name:")
+                user_principal_name = st.text_input("Email (UserPrincipalName):")
+                password = st.text_input("Temporary Password:", type="password")
+                
+                if st.form_submit_button("Create User"):
+                    if display_name and user_principal_name and password:
+                        try:
+                            headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+                            payload = {
+                                "display_name": display_name,
+                                "user_principal_name": user_principal_name,
+                                "password": password
+                            }
+                            
+                            r = requests.post(f"{API_BASE}/entra/users", json=payload, timeout=120, headers=headers)
+                            r.raise_for_status()
+                            
+                            result = r.json().get("message", "User created successfully")
+                            st.session_state["entra_chat_history"].append(
+                                (f"Create user: {display_name} ({user_principal_name})", result, "create_user")
+                            )
+                            st.session_state["show_create_user_form"] = False
+                            st.success("User creation request submitted!")
+                            st.rerun()
+                            
+                        except Exception as e:
+                            st.error(f"Failed to create user: {str(e)}")
+                    else:
+                        st.error("Please fill in all fields")
+
+    # Display chat history
+    container = st.container()
+    for user_msg, agent_msg, intent in st.session_state["entra_chat_history"]:
+        with container:
+            with st.chat_message("user"):
+                st.markdown(f"**You:** {user_msg}")
+            with st.chat_message("assistant"):
+                st.markdown(f"**Intent:** `{intent}`")
+                
+                # Format the response better
+                if isinstance(agent_msg, list):
+                    for item in agent_msg:
+                        st.markdown(f"• {item}")
+                elif agent_msg.startswith("❌"):
+                    st.error(agent_msg)
+                elif agent_msg.startswith("✅"):
+                    st.success(agent_msg)
+                else:
+                    # Check if it's formatted text with line breaks
+                    if "\n" in agent_msg:
+                        for line in agent_msg.split("\n"):
+                            if line.strip():
+                                if line.startswith("-"):
+                                    st.markdown(f"• {line[1:].strip()}")
+                                else:
+                                    st.markdown(line)
+                    else:
+                        st.markdown(f"**Result:** {agent_msg}")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Chat input
+    prompt = st.chat_input("Ask me to perform IAM operations (e.g., 'list users', 'create group', 'get user details')")
+    if prompt:
+        process_entra_command(prompt)
+
+def process_entra_command(user_input: str):
+    """Process Entra service commands"""
+    with st.spinner("Executing IAM operation..."):
+        try:
+            headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+            payload = {
+                "message": user_input,
+                "thread_id": st.session_state["entra_thread_id"]
+            }
+            
+            r = requests.post(f"{API_BASE}/entra/chat", json=payload, timeout=120, headers=headers)
+            r.raise_for_status()
+            
+            response_data = r.json()
+            intent = response_data.get("intent", "unknown")
+            result = response_data.get("result", "No response received")
+            
+            # Add to chat history
+            st.session_state["entra_chat_history"].append((user_input, result, intent))
+            st.rerun()
+            
+        except requests.exceptions.RequestException as e:
+            error_msg = f"Failed to execute command: {str(e)}"
+            st.session_state["entra_chat_history"].append((user_input, error_msg, "error"))
+            st.rerun()
+        except Exception as e:
+            error_msg = f"Unexpected error: {str(e)}"
+            st.session_state["entra_chat_history"].append((user_input, error_msg, "error"))
+            st.rerun()
+
 def about_iam():
     st.markdown('<div style="margin-top: 100px;"></div>', unsafe_allow_html=True)
     st.markdown("### About IAM")
@@ -1068,13 +1350,22 @@ def rules_and_regulations():
     st.write("3. All actions performed in the system must be logged.")
     st.write("4. MFA must be enabled for sensitive areas.")
 
+# UPDATED Main routing logic with Entra Service
 if st.session_state.get("authenticated", False):
     active_page = st.session_state.get("active_page", "main_chat")
-
+   
     if active_page == "main_chat":
         main_chat_page()
     elif active_page == "orchestrator_chat":
         orchestrator_chat_page()
+    elif active_page == "entra_id_assistant":
+        entra_service_page()
+    elif active_page == "active_directory_assistant":
+        st.markdown('<div class="centered-intro">🏢 Active Directory Service - Coming Soon</div>', unsafe_allow_html=True)
+        st.info("This service will be available in the next update.")
+    elif active_page == "iam_metrics_dashboard":
+        st.markdown('<div class="centered-intro">📊 IAM Dashboard & Reports - Coming Soon</div>', unsafe_allow_html=True)
+        st.info("Dashboard and reporting features will be available in the next update.")
     elif active_page == "about_iam":
         about_iam()
     elif active_page == "rules":

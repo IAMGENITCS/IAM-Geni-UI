@@ -6,8 +6,24 @@ import msal
 import os
 from dotenv import load_dotenv
 import ast
-import json  # ← added
+import json
 
+# METHOD 3: IMPROVED CUSTOM COMPONENT IMPORTS WITH PROPER ERROR HANDLING
+COMPONENT_AVAILABLE = False
+COMPONENT_TYPE = None
+
+# Only try to import components when we actually need them
+def try_import_components():
+    global COMPONENT_AVAILABLE, COMPONENT_TYPE
+    
+    if COMPONENT_AVAILABLE is not False:  # Already tried
+        return
+        
+    # Skip problematic components - use fallback only
+    COMPONENT_AVAILABLE = False
+    COMPONENT_TYPE = None
+    # st.info("💡 Using enhanced fallback buttons with full-width CSS")
+    
 load_dotenv()
 
 CLIENT_ID = os.getenv('CLIENT_ID')
@@ -45,7 +61,7 @@ st.set_page_config(page_title="Geni - Identity and Access Management  Agentic AI
 auth_url = initiate_login()
 azure_logout_url = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/logout?post_logout_redirect_uri={REDIRECT_URI}"
 
-# AGGRESSIVE CSS with BULLETPROOF UNIFORM FIXED SIZE prompts styling
+# ENHANCED CSS WITH ALL YOUR EXISTING STYLES
 st.markdown("""
 <style>
 .header-container {
@@ -201,27 +217,180 @@ st.markdown("""
     padding: 2rem 1rem 4rem !important;
 }
 
-/* Sidebar generic styles — DEFAULT/WHITE look */
-section[data-testid="stSidebar"] button {
-    display: block;
-    width: 100%;
-    padding: 1px 8px;
-    text-align: left;
-    border-radius: 8px;
-    margin-bottom: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    background: #e5e5e5 !important;   /* white background */
-    color: #111 !important;           /* dark text */
-    border: 1px solid transparent;    /* no visible border by default */
-    box-shadow: none;
-}
-section[data-testid="stSidebar"] button:hover {
-    background: #f5f7fb !important;   /* subtle light hover */
-    color: #111 !important;
+/* Entra Service specific styles */
+.quick-actions-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
 }
 
-/* Profile box + hover card */
+.quick-action-btn {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #dee2e6;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 150px;
+    text-align: center;
+}
+
+.quick-action-btn:hover {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+}
+
+.operation-status {
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-weight: 600;
+}
+
+.status-running {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+}
+
+.status-success {
+    background-color: #d1e7dd;
+    border-left: 4px solid #198754;
+    color: #0f5132;
+}
+
+.status-error {
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+}
+
+/* ULTRA-AGGRESSIVE FULL-WIDTH SIDEBAR BUTTONS */
+section[data-testid="stSidebar"] {
+    width: 280px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
+}
+
+section[data-testid="stSidebar"] div.stButton,
+section[data-testid="stSidebar"] .stButton,
+section[data-testid="stSidebar"] div[data-testid="column"] div.stButton,
+section[data-testid="stSidebar"] div[data-testid="column"] .stButton,
+section[data-testid="stSidebar"] .element-container div.stButton,
+section[data-testid="stSidebar"] .element-container .stButton,
+[data-testid="stSidebar"] div.stButton,
+[data-testid="stSidebar"] .stButton {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 8px 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+}
+
+section[data-testid="stSidebar"] div.stButton > button,
+section[data-testid="stSidebar"] .stButton > button,
+section[data-testid="stSidebar"] div[data-testid="column"] div.stButton > button,
+section[data-testid="stSidebar"] div[data-testid="column"] .stButton > button,
+section[data-testid="stSidebar"] .element-container div.stButton > button,
+section[data-testid="stSidebar"] .element-container .stButton > button,
+[data-testid="stSidebar"] div.stButton > button,
+[data-testid="stSidebar"] .stButton > button,
+section[data-testid="stSidebar"] button,
+[data-testid="stSidebar"] button {
+    display: block !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    position: relative !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 0 8px 0 !important;
+    padding: 12px 16px !important;
+    background: #e5e5e5 !important;
+    color: #111 !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    hyphens: auto !important;
+    line-height: 1.3 !important;
+    text-overflow: visible !important;
+    overflow: visible !important;
+    min-height: 44px !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+    float: none !important;
+    clear: both !important;
+    transform: none !important;
+    transition: all 0.2s ease !important;
+}
+
+section[data-testid="stSidebar"] div.stButton > button:hover,
+section[data-testid="stSidebar"] .stButton > button:hover,
+[data-testid="stSidebar"] div.stButton > button:hover,
+[data-testid="stSidebar"] .stButton > button:hover,
+section[data-testid="stSidebar"] button:hover,
+[data-testid="stSidebar"] button:hover {
+    background: #f5f7fb !important;
+    color: #111 !important;
+    border-color: #dee2e6 !important;
+    transform: none !important;
+}
+
+section[data-testid="stSidebar"] div.stButton > button > div,
+section[data-testid="stSidebar"] .stButton > button > div,
+[data-testid="stSidebar"] div.stButton > button > div,
+[data-testid="stSidebar"] .stButton > button > div,
+section[data-testid="stSidebar"] button > div,
+[data-testid="stSidebar"] button > div {
+    width: 100% !important;
+    text-align: left !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    line-height: 1.3 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+}
+
+section[data-testid="stSidebar"] .element-container,
+section[data-testid="stSidebar"] div[data-testid="element-container"],
+[data-testid="stSidebar"] .element-container,
+[data-testid="stSidebar"] div[data-testid="element-container"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+section[data-testid="stSidebar"] .css-1d391kg,
+[data-testid="stSidebar"] .css-1d391kg {
+    width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    box-sizing: border-box !important;
+}
+
+/* Profile box styles */
 section[data-testid="stSidebar"] .profile-box {
     position: fixed;
     bottom: 20px;
@@ -233,6 +402,7 @@ section[data-testid="stSidebar"] .profile-box {
     z-index: 9999;
     cursor: pointer;
 }
+
 section[data-testid="stSidebar"] .profile-initials {
     background: linear-gradient(135deg, #007bff, #0056b3);
     color: white;
@@ -246,6 +416,7 @@ section[data-testid="stSidebar"] .profile-initials {
     font-size: 16px;
     flex-shrink: 0;
 }
+
 section[data-testid="stSidebar"] .profile-details {
     font-size: 13px;
     overflow: hidden;
@@ -255,6 +426,7 @@ section[data-testid="stSidebar"] .profile-details {
     flex-direction: column;
     gap: 2px;
 }
+
 section[data-testid="stSidebar"] .profile-displayname {
     display: block;
     overflow: hidden;
@@ -265,6 +437,7 @@ section[data-testid="stSidebar"] .profile-displayname {
     line-height: 1.1;
     font-weight: bold;
 }
+
 section[data-testid="stSidebar"] .profile-email {
     font-size: 11px;
     display: block;
@@ -283,18 +456,25 @@ section[data-testid="stSidebar"] .hover-card {
     left: 12px;
     width: 260px;
     border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.75); /* stronger shadow for dark mode */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.75);
     padding: 10px;
     font-size: 13px;
     z-index: 999999 !important;
-    background: #222 !important;    /* dark background */
-    color: #fafafa !important;      /* light text */
+    background: #222 !important;
+    color: #fafafa !important;
     border: 1px solid #444 !important;
 }
+
 section[data-testid="stSidebar"] .profile-box:hover ~ .hover-card {
     display: block;
 }
 
+/* Tables/DataFrames styling for dark mode */
+.stTable, .stDataFrame {
+    background-color: #1e1e1e !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
 .stTable td, .stTable th {
     background-color: #1e1e1e !important;
     color: #f0f0f0 !important;
@@ -552,6 +732,21 @@ button[key^="prompt_"] > * {
     color: #495057;
     margin-bottom: 40px;
 }
+
+@media (max-width: 768px) {
+    section[data-testid="stSidebar"] {
+        width: 200px !important;
+        min-width: 200px !important;
+        max-width: 200px !important;
+    }
+    
+    section[data-testid="stSidebar"] button,
+    [data-testid="stSidebar"] button {
+        padding: 10px 12px !important;
+        font-size: 14px !important;
+        min-height: 40px !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -565,7 +760,6 @@ def render_header():
     <div class="header-container">
         <div class="header-left">
             <img src="data:image/png;base64,{get_image_base64(logo_path)}" alt="TCS Logo" />
-            <p class="header-title">Geni - Identity and Access Management  Agentic AI Service</p>
             <p class="header-title">Geni - Identity and Access Management  Agentic AI Service</p>
         </div>
         <div class="header-right">
@@ -585,46 +779,129 @@ st.markdown("""
 if "active_page" not in st.session_state:
     st.session_state["active_page"] = "main_chat"
 
-# ---------- Helper: Sidebar Button with Active State ----------
-def sidebar_button(label, page_name):
-    # Check if this button is the active page
-    active = st.session_state.get("active_page") == page_name
+# FIXED METHOD 3: CUSTOM COMPONENT NAVIGATION WITH PROPER ERROR HANDLING
+def create_custom_sidebar_navigation():
+    """Fixed Method 3: Custom sidebar navigation with safe component loading"""
+    
+    navigation_options = [
+        "👤 Assistant for End users",
+        "👑 Assistant for IAM Admin", 
+        "🔐 Microsoft Entra Service",
+        "🏢 Active Directory Service",
+        "📊 IAM Dashboard & Reports"
+    ]
+    
+    page_mapping = {
+        "👤 Assistant for End users": "main_chat",
+        "👑 Assistant for IAM Admin": "orchestrator_chat",
+        "🔐 Microsoft Entra Service": "entra_id_assistant", 
+        "🏢 Active Directory Service": "active_directory_assistant",
+        "📊 IAM Dashboard & Reports": "iam_metrics_dashboard"
+    }
+    
+    current_page = st.session_state.get("active_page", "main_chat")
+    current_index = 0
+    for i, page_key in enumerate(page_mapping.values()):
+        if page_key == current_page:
+            current_index = i
+            break
+    
+    with st.sidebar:
+        st.markdown('<div style="height: 10vh;"></div>', unsafe_allow_html=True)
+        
+        # Try to load and use components safely
+        try_import_components()
+        
+        selected = None
+        
+        if COMPONENT_TYPE == "st_btn_select":
+            try:
+                from st_btn_select import st_btn_select
+                selected = st_btn_select(
+                    navigation_options,
+                    index=current_index,
+                    key="sidebar_nav_comp"  # Different key to avoid conflicts
+                )
+            except Exception as e:
+                st.error(f"Component error: {str(e)}")
+                selected = create_fallback_navigation(navigation_options, page_mapping, current_page)
+                
+        elif COMPONENT_TYPE == "option_menu":
+            try:
+                from streamlit_option_menu import option_menu
+                selected = option_menu(
+                    menu_title=None,
+                    options=navigation_options,
+                    default_index=current_index,
+                    orientation="vertical",
+                    key="sidebar_nav_comp"
+                )
+            except Exception as e:
+                st.error(f"Component error: {str(e)}")
+                selected = create_fallback_navigation(navigation_options, page_mapping, current_page)
+        else:
+            # Use fallback navigation
+            selected = create_fallback_navigation(navigation_options, page_mapping, current_page)
+        
+        # Handle navigation selection
+        if selected and selected in page_mapping:
+            new_page = page_mapping[selected]
+            if new_page != st.session_state.get("active_page"):
+                st.session_state["active_page"] = new_page
+                st.rerun()
 
-    # Normal Streamlit button (unique key)
-    if st.sidebar.button(label, key=page_name):
-        st.session_state["active_page"] = page_name
-        st.rerun()  # rerun to update highlight
+def create_fallback_navigation(navigation_options, page_mapping, current_page):
+    """Fallback navigation using regular Streamlit buttons"""
+    selected = None
+    for i, (label, page_key) in enumerate(zip(navigation_options, page_mapping.values())):
+        is_active = current_page == page_key
+        
+        if st.button(
+            label, 
+            key=f"fallback_nav_{page_key}",
+            use_container_width=True,
+            type="primary" if is_active else "secondary"
+        ):
+            selected = label
+            
+        # Apply active state CSS
+        if is_active:
+            st.markdown(f"""
+            <style>
+            section[data-testid="stSidebar"] button[key="fallback_nav_{page_key}"] {{
+                background: #eaf3ff !important;
+                color: #007bff !important;
+                border-left: 4px solid #007bff !important;
+            }}
+            </style>
+            """, unsafe_allow_html=True)
+    
+    return selected
 
-    # Inject CSS to make inactive buttons white and active one subtly highlighted
-    # Inactive: white bg, dark text. Active: very light blue bg, dark text, subtle left border.
-    bg_inactive = "#ffffff"
-    bg_active = "#eaf3ff"   # very light blue for active (subtle)
-    text_color = "#111111"
-    left_border = "4px solid #007bff" if active else "4px solid transparent"
+def create_disabled_sidebar_navigation():
+    """FIXED: Create disabled sidebar navigation WITHOUT using components"""
+    
+    with st.sidebar:
+        st.title("Welcome")
+        st.write("Please log in to access the IAM Assistant features.")
+        st.markdown('<div style="height: 2vh;"></div>', unsafe_allow_html=True)
+        
+        # NEVER use custom components here - always use regular disabled buttons
+        disabled_buttons = [
+            "🔒 Assistant for End users",
+            "🔒 Assistant for IAM Admin",
+            "🔒 Microsoft Entra Service", 
+            "🔒 Active Directory Service",
+            "🔒 IAM Dashboard & Reports"
+        ]
+        
+        for i, button_text in enumerate(disabled_buttons):
+            if st.button(button_text, key=f"disabled_btn_{i}", use_container_width=True, disabled=True):
+                st.sidebar.warning("🔒 Please log in to access this feature!")
+        
+        st.markdown('<div style="margin-top: 20px; font-size: 12px; color: #666; font-style: italic;">Login to enable these features</div>', unsafe_allow_html=True)
 
-    st.sidebar.markdown(f"""
-    <style>
-    /* target the actual button element Streamlit renders (wrapper div present) */
-    div.stButton > button[key="{page_name}"] {{
-        background: {bg_active if active else bg_inactive} !important;
-        color: {text_color} !important;
-        width: 100%;
-        text-align: left;
-        padding: 8px 12px;
-        margin-bottom: 6px;
-        border-radius: 8px;
-        font-weight: 600;
-        border: none;
-        box-shadow: none;
-        border-left: {left_border} !important;
-    }}
-    div.stButton > button[key="{page_name}"]:hover {{
-        background: #f5f7fb !important;
-        color: {text_color} !important;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
-
+# SESSION STATE INITIALIZATION
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
 if 'user_info' not in st.session_state:
@@ -633,26 +910,19 @@ if 'user_info' not in st.session_state:
         'preferred_username': 'pradeep.vishwakarma@example.com'
     }
 
+# SIDEBAR NAVIGATION LOGIC
 if st.session_state.get("authenticated", False):
-    sidebar_button("Assistant for End users", "main_chat")
-    sidebar_button("Assistant for IAM Admin", "orchestrator_chat")
-    sidebar_button("Microsoft Entra Service", "entra_id_assistant")
-    sidebar_button("Active Directory Service", "active_directory_assistant")
-    sidebar_button("IAM Dashboard & Reports", "iam_metrics_dashboard")
-
+    create_custom_sidebar_navigation()
+    
+    # Profile rendering
     user_info = st.session_state.get("user_info", {})
-
     def render_sidebar_profile(user_info: dict):
-        """
-        Render the fixed, hoverable profile box in the sidebar.
-        """
+        """Render the fixed, hoverable profile box in the sidebar."""
         display_name = user_info.get("name", "User")
         email = user_info.get("preferred_username", "user@example.com")
         role = user_info.get("role", "Employee")
-
         initials = "".join([part[0].upper() for part in display_name.split()[:2]])
 
-        # HTML structure injected into the sidebar
         st.sidebar.markdown(f"""
         <div class="profile-box">
             <div class="profile-initials">{initials}</div>
@@ -668,19 +938,19 @@ if st.session_state.get("authenticated", False):
             <strong>Role:</strong> {role}<br/>
         </div>
         """, unsafe_allow_html=True)
-
-    # render the profile once
+    
     render_sidebar_profile(user_info)
-
+    
 else:
-    st.sidebar.title("Welcome")
-    st.sidebar.write("Please log in to access the IAM Assistant features.")
+    create_disabled_sidebar_navigation()
 
+# Handle logout
 if st.query_params.get("app_logout") == "1":
     for k in [
         "authenticated", "access_token", "thread_id", "chat_history", "user_info",
         "orch_thread_id", "orchestrator_chat_history", "active_page", "selected_prompt", 
-        "chat_input_value", "last_input", "original_prompt_value"
+        "chat_input_value", "last_input", "original_prompt_value", "entra_thread_id", 
+        "entra_chat_history", "show_user_input", "show_group_input", "show_create_user_form"
     ]:
         st.session_state.pop(k, None)
     try:
@@ -715,7 +985,6 @@ if "code" in st.query_params:
 def show_intro():
     st.markdown('<div class="centered-intro">You are using "Assistant for End users" functionality​</div>', unsafe_allow_html=True)
 
-# ---------- Load prompts from JSON file ----------
 def load_prompts_from_file(filepath: str = "prompts.json"):
     """Load prompts from JSON file"""
     try:
@@ -729,7 +998,6 @@ def load_prompts_from_file(filepath: str = "prompts.json"):
         st.error(f"Error reading prompts file '{filepath}'. Please check the JSON format.")
         return []
 
-# ---------- BULLETPROOF: Uniform grid system with aggressive CSS ----------
 def show_suggested_prompts():
     """Display ALL prompts in simple sequential 3-column grid with BULLETPROOF fixed size"""
     
@@ -796,7 +1064,6 @@ def main_chat_page():
     if "thread_id" not in st.session_state:
         try:
             headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
-            r = requests.post(f"{API_BASE}/thread", timeout=120, headers=headers)
             r = requests.post(f"{API_BASE}/thread", timeout=120, headers=headers)
             r.raise_for_status()
             st.session_state["thread_id"] = r.json()["thread_id"]
@@ -940,12 +1207,8 @@ def main_chat_page():
             st.session_state["chat_history"].append((current_user_input, reply))
             st.rerun()
 
-# ---------- Helper: render structured (JSON) or plain text for Orchestrator ----------
 def _render_result_as_table_or_text(result_str: str, role_label: str = "Orchestrator"):
-    """
-    Detects JSON returned by the ProvisioningAgent and renders as a table.
-    Falls back to plain text if not JSON.
-    """
+    """Detects JSON returned by the ProvisioningAgent and renders as a table. Falls back to plain text if not JSON."""
 
     # Try to parse JSON
     try:
@@ -986,7 +1249,6 @@ def _render_result_as_table_or_text(result_str: str, role_label: str = "Orchestr
     else:
         st.markdown(f"**{role_label}**: {result_str}")
 
-# ---------- Orchestrator Chat Page ----------
 def orchestrator_chat_page():
     if "access_token" not in st.session_state or not st.session_state["access_token"]:
         st.error("Access token is not found or invalid.", icon="🚨")
@@ -1018,7 +1280,6 @@ def orchestrator_chat_page():
             with st.chat_message("assistant"):
                 _render_result_as_table_or_text(agent_msg, role_label="Orchestrator")
 
-    prompt = st.chat_input("Hi there! Geni is ready to help you on IAM – start using me")
     prompt = st.chat_input("Hi there! Geni is ready to help you on IAM – start using me")
     if prompt:
         user_input = prompt
@@ -1060,6 +1321,176 @@ def orchestrator_chat_page():
         st.session_state["orchestrator_chat_history"].append((user_input, reply))
         st.rerun()
 
+def entra_service_page():
+    """Microsoft Entra Service chat interface"""
+    if "access_token" not in st.session_state or not st.session_state["access_token"]:
+        st.error("Access token is not found or invalid.", icon="🚨")
+        return
+
+    if "entra_thread_id" not in st.session_state:
+        st.session_state["entra_thread_id"] = f"entra-{int(time.time())}"
+
+    if "entra_chat_history" not in st.session_state:
+        st.session_state["entra_chat_history"] = []
+
+    container_class = "message-container no-messages" if len(st.session_state["entra_chat_history"]) == 0 else "message-container"
+    st.markdown(f'<div class="{container_class}">', unsafe_allow_html=True)
+    
+    if len(st.session_state["entra_chat_history"]) == 0:
+        st.markdown('<div class="centered-intro">🔐 Microsoft Entra Service - Direct IAM Operations</div>', unsafe_allow_html=True)
+        
+        # Add quick action buttons
+        st.markdown("### Quick Actions")
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            if st.button("📋 List All Users", key="list_users_btn"):
+                process_entra_command("list all users")
+        
+        with col2:
+            if st.button("👥 List All Groups", key="list_groups_btn"):
+                process_entra_command("list all groups")
+        
+        with col3:
+            if st.button("ℹ️ Get User Details", key="user_details_btn"):
+                st.session_state["show_user_input"] = True
+                st.rerun()
+        
+        # Additional action buttons
+        col4, col5, col6 = st.columns(3)
+        
+        with col4:
+            if st.button("📊 List Top 10 Users", key="list_top_users_btn"):
+                process_entra_command("list top 10 users")
+        
+        with col5:
+            if st.button("🔍 Group Details", key="group_details_btn"):
+                st.session_state["show_group_input"] = True
+                st.rerun()
+        
+        with col6:
+            if st.button("🆕 Create User", key="create_user_btn"):
+                st.session_state["show_create_user_form"] = True
+                st.rerun()
+        
+        # Show input forms if requested
+        if st.session_state.get("show_user_input", False):
+            with st.form("user_details_form"):
+                user_email = st.text_input("Enter user email or ID:")
+                if st.form_submit_button("Get Details"):
+                    if user_email:
+                        process_entra_command(f"get details for user {user_email}")
+                        st.session_state["show_user_input"] = False
+                        st.rerun()
+        
+        if st.session_state.get("show_group_input", False):
+            with st.form("group_details_form"):
+                group_id = st.text_input("Enter group ID or name:")
+                if st.form_submit_button("Get Group Details"):
+                    if group_id:
+                        process_entra_command(f"get details for group {group_id}")
+                        st.session_state["show_group_input"] = False
+                        st.rerun()
+        
+        if st.session_state.get("show_create_user_form", False):
+            with st.form("create_user_form"):
+                st.markdown("#### Create New User")
+                display_name = st.text_input("Display Name:")
+                user_principal_name = st.text_input("Email (UserPrincipalName):")
+                password = st.text_input("Temporary Password:", type="password")
+                
+                if st.form_submit_button("Create User"):
+                    if display_name and user_principal_name and password:
+                        try:
+                            headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+                            payload = {
+                                "display_name": display_name,
+                                "user_principal_name": user_principal_name,
+                                "password": password
+                            }
+                            
+                            r = requests.post(f"{API_BASE}/entra/users", json=payload, timeout=120, headers=headers)
+                            r.raise_for_status()
+                            
+                            result = r.json().get("message", "User created successfully")
+                            st.session_state["entra_chat_history"].append(
+                                (f"Create user: {display_name} ({user_principal_name})", result, "create_user")
+                            )
+                            st.session_state["show_create_user_form"] = False
+                            st.success("User creation request submitted!")
+                            st.rerun()
+                            
+                        except Exception as e:
+                            st.error(f"Failed to create user: {str(e)}")
+                    else:
+                        st.error("Please fill in all fields")
+
+    # Display chat history
+    container = st.container()
+    for user_msg, agent_msg, intent in st.session_state["entra_chat_history"]:
+        with container:
+            with st.chat_message("user"):
+                st.markdown(f"**You:** {user_msg}")
+            with st.chat_message("assistant"):
+                st.markdown(f"**Intent:** `{intent}`")
+                
+                # Format the response better
+                if isinstance(agent_msg, list):
+                    for item in agent_msg:
+                        st.markdown(f"• {item}")
+                elif agent_msg.startswith("❌"):
+                    st.error(agent_msg)
+                elif agent_msg.startswith("✅"):
+                    st.success(agent_msg)
+                else:
+                    # Check if it's formatted text with line breaks
+                    if "\n" in agent_msg:
+                        for line in agent_msg.split("\n"):
+                            if line.strip():
+                                if line.startswith("-"):
+                                    st.markdown(f"• {line[1:].strip()}")
+                                else:
+                                    st.markdown(line)
+                    else:
+                        st.markdown(f"**Result:** {agent_msg}")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Chat input
+    prompt = st.chat_input("Ask me to perform IAM operations (e.g., 'list users', 'create group', 'get user details')")
+    if prompt:
+        process_entra_command(prompt)
+
+def process_entra_command(user_input: str):
+    """Process Entra service commands"""
+    with st.spinner("Executing IAM operation..."):
+        try:
+            headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+            payload = {
+                "message": user_input,
+                "thread_id": st.session_state["entra_thread_id"]
+            }
+            
+            r = requests.post(f"{API_BASE}/entra/chat", json=payload, timeout=120, headers=headers)
+            r.raise_for_status()
+            
+            response_data = r.json()
+            intent = response_data.get("intent", "unknown")
+            result = response_data.get("result", "No response received")
+            
+            # Add to chat history
+            st.session_state["entra_chat_history"].append((user_input, result, intent))
+            st.rerun()
+            
+        except requests.exceptions.RequestException as e:
+            error_msg = f"Failed to execute command: {str(e)}"
+            st.session_state["entra_chat_history"].append((user_input, error_msg, "error"))
+            st.rerun()
+        except Exception as e:
+            error_msg = f"Unexpected error: {str(e)}"
+            st.session_state["entra_chat_history"].append((user_input, error_msg, "error"))
+            st.rerun()
+
 def about_iam():
     st.markdown('<div style="margin-top: 100px;"></div>', unsafe_allow_html=True)
     st.markdown("### About IAM")
@@ -1073,13 +1504,22 @@ def rules_and_regulations():
     st.write("3. All actions performed in the system must be logged.")
     st.write("4. MFA must be enabled for sensitive areas.")
 
+# MAIN ROUTING LOGIC WITH ALL YOUR FUNCTIONS
 if st.session_state.get("authenticated", False):
     active_page = st.session_state.get("active_page", "main_chat")
-
+   
     if active_page == "main_chat":
         main_chat_page()
     elif active_page == "orchestrator_chat":
         orchestrator_chat_page()
+    elif active_page == "entra_id_assistant":
+        entra_service_page()
+    elif active_page == "active_directory_assistant":
+        st.markdown('<div class="centered-intro">🏢 Active Directory Service - Coming Soon</div>', unsafe_allow_html=True)
+        st.info("This service will be available in the next update.")
+    elif active_page == "iam_metrics_dashboard":
+        st.markdown('<div class="centered-intro">📊 IAM Dashboard & Reports - Coming Soon</div>', unsafe_allow_html=True)
+        st.info("Dashboard and reporting features will be available in the next update.")
     elif active_page == "about_iam":
         about_iam()
     elif active_page == "rules":
@@ -1087,17 +1527,6 @@ if st.session_state.get("authenticated", False):
     else:
         main_chat_page()
 else:
-    st.markdown("""
-<div style="display:flex; justify-content:center; align-items:center; height:80vh; text-align:center; font-size:18px; line-height:1.6;">
-    <div>
-        Ask any thing on Identity and Access Management
-        <br>
-        Click the links on the left side to understand more on how these assistants can help you
-        <br>
-        Login if you want to start using them!
-    </div>
-</div>
-""", unsafe_allow_html=True)
     st.markdown("""
 <div style="display:flex; justify-content:center; align-items:center; height:80vh; text-align:center; font-size:18px; line-height:1.6;">
     <div>

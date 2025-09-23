@@ -52,7 +52,7 @@ class IAMAssistant:
             raise RuntimeError("No Cognitive Search connection found for IAM documents.")
 
         # Configure Azure AI Search Tooll
-        self.ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="iam-docs-rag")
+        self.ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="end-user-rag")
 
         # Create the agent once
         self.iam_agent = self.project_client.agents.create_agent(
@@ -60,7 +60,7 @@ class IAMAssistant:
             name="IAM Assistant",
             instructions=
                 """You are an expert assistant focused exclusively on assisting users with tasks related to Identity and Access Management in Entra ID. 
-You should ONLY use the provided IAM documentation for answering user queries from "tool_resources" (iam-docs-rag). When asked a query:
+You should ONLY use the provided IAM documentation for answering user queries from "tool_resources" (end-user-rag). When asked a query:
 1. **Search the documentation**: Use the "ai search tool" to retrieve relevant content from the IAM documentation for the user query.
 2. **No external sources**: Do not use the web or any external sources to generate answers.
 3. **Refuse unsupported queries**: If you cannot find relevant information in the documentation, say: "I don't know the answer to that. My responses are based solely on the IAM documentation."
