@@ -1,13 +1,11 @@
 {
     "prompts": [
-        "How to raise an access request ? ",
-        "What is Self Service Password Reset", 
-        "steps to reset password in Entra ID? ",
-        "How to setup MFA in Entra ID?        ",
-        "How to manage user roles in Azure AD?",
-        "What is Conditional Access in Entra ID?",
-        "How to configure SSO for applications? ",
-        "What are the best practices for IAM?   ",
-        "Application registration in Entra ID?  "
+        "What are different MFA methods that I can use for windows login and explain the process to set them up?",
+        "I lost my mobile device, have a new one now, How do I re-register MFA for this mobile device?",
+        "I have raised an access request to enable Teams recording, the current approver is on leave. What is the fallback process if an approver is on leave? ",
+        "As a normal user what access do I get by default ?",
+        "I forgot my password however have a registered device with MFA enabled on it, How to reset my password?",
+        "Who can view and update my profile information in centralized enterprise system? "
+        
     ]
 }

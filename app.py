@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 import ast
 import json
+import html
 
 # METHOD 3: IMPROVED CUSTOM COMPONENT IMPORTS WITH PROPER ERROR HANDLING
 COMPONENT_AVAILABLE = False
@@ -61,7 +62,7 @@ st.set_page_config(page_title="Geni - Identity and Access Management  Agentic AI
 auth_url = initiate_login()
 azure_logout_url = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/logout?post_logout_redirect_uri={REDIRECT_URI}"
 
-# ENHANCED CSS WITH ALL YOUR EXISTING STYLES
+# ENHANCED CSS WITH ULTRA-AGGRESSIVE UNIFORM PROMPT BUTTONS + AD SUPPORT
 st.markdown("""
 <style>
 .header-container {
@@ -503,7 +504,8 @@ div[data-testid="stDataFrame"] tbody tr:nth-child(even) {
     background-color: #1e1e1e !important;
 }
 
-/* NUCLEAR OPTION: BULLETPROOF UNIFORM BUTTON SIZING */
+/* ULTRA-AGGRESSIVE UNIFORM PROMPT BUTTONS - METHOD 3 STYLE */
+/* Applied to prompt_, entra_prompt_, and ad_prompt_ keys */
 .prompt-grid-container {
     display: flex;
     flex-direction: column;
@@ -522,19 +524,40 @@ div[data-testid="stDataFrame"] tbody tr:nth-child(even) {
     flex-wrap: nowrap;
 }
 
-/* AGGRESSIVE: Multiple selector targeting for maximum specificity */
+/* NUCLEAR OPTION: FORCE UNIFORM CONTAINER DIMENSIONS */
 div.stButton:has(button[key^="prompt_"]),
+div.stButton:has(button[key^="entra_prompt_"]),
+div.stButton:has(button[key^="ad_prompt_"]),
 .stButton:has(button[key^="prompt_"]),
+.stButton:has(button[key^="entra_prompt_"]),
+.stButton:has(button[key^="ad_prompt_"]),
 div[data-testid="column"] div.stButton:has(button[key^="prompt_"]),
+div[data-testid="column"] div.stButton:has(button[key^="entra_prompt_"]),
+div[data-testid="column"] div.stButton:has(button[key^="ad_prompt_"]),
 div[data-testid="column"] .stButton:has(button[key^="prompt_"]),
+div[data-testid="column"] .stButton:has(button[key^="entra_prompt_"]),
+div[data-testid="column"] .stButton:has(button[key^="ad_prompt_"]),
 .element-container div.stButton:has(button[key^="prompt_"]),
-.element-container .stButton:has(button[key^="prompt_"]) {
-    width: 400px !important;
-    min-width: 400px !important;
-    max-width: 400px !important;
-    height: 130px !important;
-    min-height: 130px !important;
-    max-height: 130px !important;
+.element-container div.stButton:has(button[key^="entra_prompt_"]),
+.element-container div.stButton:has(button[key^="ad_prompt_"]),
+.element-container .stButton:has(button[key^="prompt_"]),
+.element-container .stButton:has(button[key^="entra_prompt_"]),
+.element-container .stButton:has(button[key^="ad_prompt_"]),
+div[data-testid="column"]:has(button[key^="prompt_"]),
+div[data-testid="column"]:has(button[key^="entra_prompt_"]),
+div[data-testid="column"]:has(button[key^="ad_prompt_"]),
+[data-testid="column"]:has(button[key^="prompt_"]),
+[data-testid="column"]:has(button[key^="entra_prompt_"]),
+[data-testid="column"]:has(button[key^="ad_prompt_"]) {
+    /* BULLETPROOF FIXED DIMENSIONS */
+    width: 380px !important;
+    min-width: 380px !important;
+    max-width: 380px !important;
+    height: 120px !important;
+    min-height: 120px !important;
+    max-height: 120px !important;
+    
+    /* FORCE LAYOUT BEHAVIOR */
     margin: 0 !important;
     padding: 0 !important;
     display: flex !important;
@@ -545,60 +568,109 @@ div[data-testid="column"] .stButton:has(button[key^="prompt_"]),
     flex-grow: 0 !important;
     flex-shrink: 0 !important;
     flex-basis: auto !important;
+    position: relative !important;
+    overflow: hidden !important;
 }
 
-/* NUCLEAR: Multiple selectors for buttons themselves */
+/* NUCLEAR OPTION: FORCE UNIFORM BUTTON DIMENSIONS */
 div.stButton > button[key^="prompt_"],
+div.stButton > button[key^="entra_prompt_"],
+div.stButton > button[key^="ad_prompt_"],
 .stButton > button[key^="prompt_"],
+.stButton > button[key^="entra_prompt_"],
+.stButton > button[key^="ad_prompt_"],
 div[data-testid="column"] div.stButton > button[key^="prompt_"],
+div[data-testid="column"] div.stButton > button[key^="entra_prompt_"],
+div[data-testid="column"] div.stButton > button[key^="ad_prompt_"],
 div[data-testid="column"] .stButton > button[key^="prompt_"],
+div[data-testid="column"] .stButton > button[key^="entra_prompt_"],
+div[data-testid="column"] .stButton > button[key^="ad_prompt_"],
 .element-container div.stButton > button[key^="prompt_"],
+.element-container div.stButton > button[key^="entra_prompt_"],
+.element-container div.stButton > button[key^="ad_prompt_"],
 .element-container .stButton > button[key^="prompt_"],
-button[key^="prompt_"] {
-    width: 400px !important;
-    min-width: 400px !important;
-    max-width: 400px !important;
-    height: 130px !important;
-    min-height: 130px !important;
-    max-height: 130px !important;
+.element-container .stButton > button[key^="entra_prompt_"],
+.element-container .stButton > button[key^="ad_prompt_"],
+div[data-testid="column"] button[key^="prompt_"],
+div[data-testid="column"] button[key^="entra_prompt_"],
+div[data-testid="column"] button[key^="ad_prompt_"],
+[data-testid="column"] button[key^="prompt_"],
+[data-testid="column"] button[key^="entra_prompt_"],
+[data-testid="column"] button[key^="ad_prompt_"],
+button[key^="prompt_"],
+button[key^="entra_prompt_"],
+button[key^="ad_prompt_"] {
+    /* BULLETPROOF BUTTON DIMENSIONS */
+    width: 380px !important;
+    min-width: 380px !important;
+    max-width: 380px !important;
+    height: 120px !important;
+    min-height: 120px !important;
+    max-height: 120px !important;
+    
+    /* VISUAL STYLING */
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
     border: 2px solid #dee2e6 !important;
     border-radius: 12px !important;
     color: #495057 !important;
     font-weight: 600 !important;
-    font-size: 14px !important;
+    font-size: 13px !important;
     line-height: 1.2 !important;
-    padding: 12px !important;
-    margin: 0 !important;
     
-    /* CRITICAL: Force layout and prevent auto-sizing */
+    /* LAYOUT BEHAVIOR - CRITICAL */
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
+    box-sizing: border-box !important;
+    
+    /* TEXT HANDLING - ENSURE WRAPPING */
     white-space: pre-wrap !important;
     word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    hyphens: auto !important;
     overflow: hidden !important;
-    box-sizing: border-box !important;
+    
+    /* POSITIONING AND SPACING */
+    margin: 0 !important;
+    padding: 12px !important;
+    position: relative !important;
+    
+    /* FLEX BEHAVIOR - PREVENT AUTO-SIZING */
     flex: none !important;
     flex-grow: 0 !important;
     flex-shrink: 0 !important;
     flex-basis: auto !important;
-    position: relative !important;
     
-    /* Transitions */
+    /* TRANSITIONS AND EFFECTS */
     transition: all 0.3s ease !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    cursor: pointer !important;
 }
 
-/* Hover effects with multiple selectors */
+/* HOVER EFFECTS WITH MAXIMUM SPECIFICITY */
 div.stButton > button[key^="prompt_"]:hover,
+div.stButton > button[key^="entra_prompt_"]:hover,
+div.stButton > button[key^="ad_prompt_"]:hover,
 .stButton > button[key^="prompt_"]:hover,
+.stButton > button[key^="entra_prompt_"]:hover,
+.stButton > button[key^="ad_prompt_"]:hover,
 div[data-testid="column"] div.stButton > button[key^="prompt_"]:hover,
+div[data-testid="column"] div.stButton > button[key^="entra_prompt_"]:hover,
+div[data-testid="column"] div.stButton > button[key^="ad_prompt_"]:hover,
 div[data-testid="column"] .stButton > button[key^="prompt_"]:hover,
+div[data-testid="column"] .stButton > button[key^="entra_prompt_"]:hover,
+div[data-testid="column"] .stButton > button[key^="ad_prompt_"]:hover,
 .element-container div.stButton > button[key^="prompt_"]:hover,
+.element-container div.stButton > button[key^="entra_prompt_"]:hover,
+.element-container div.stButton > button[key^="ad_prompt_"]:hover,
 .element-container .stButton > button[key^="prompt_"]:hover,
-button[key^="prompt_"]:hover {
+.element-container .stButton > button[key^="entra_prompt_"]:hover,
+.element-container .stButton > button[key^="ad_prompt_"]:hover,
+button[key^="prompt_"]:hover,
+button[key^="entra_prompt_"]:hover,
+button[key^="ad_prompt_"]:hover {
     background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
     color: white !important;
     border-color: #007bff !important;
@@ -606,90 +678,102 @@ button[key^="prompt_"]:hover {
     box-shadow: 0 4px 12px rgba(0,123,255,0.3) !important;
 }
 
-/* OVERRIDE STREAMLIT'S COLUMN BEHAVIOR - Multiple selectors */
-div[data-testid="column"]:has(button[key^="prompt_"]),
-[data-testid="column"]:has(button[key^="prompt_"]),
-.element-container:has(button[key^="prompt_"]),
-div[data-testid="column"]:has(.stButton button[key^="prompt_"]),
-[data-testid="column"]:has(.stButton button[key^="prompt_"]) {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 400px !important;
-    min-width: 400px !important;
-    max-width: 400px !important;
-    height: 130px !important;
-    min-height: 130px !important;
-    max-height: 130px !important;
-    padding: 0 !important;
-    margin: 0 auto !important;
-    flex: none !important;
-    flex-grow: 0 !important;
-    flex-shrink: 0 !important;
-    flex-basis: auto !important;
-}
-
-/* BUTTON TEXT CONTAINER - Multiple selectors */
+/* BUTTON TEXT CONTAINER - MAXIMUM SPECIFICITY */
 div.stButton > button[key^="prompt_"] > div,
+div.stButton > button[key^="entra_prompt_"] > div,
+div.stButton > button[key^="ad_prompt_"] > div,
 .stButton > button[key^="prompt_"] > div,
+.stButton > button[key^="entra_prompt_"] > div,
+.stButton > button[key^="ad_prompt_"] > div,
 button[key^="prompt_"] > div,
+button[key^="entra_prompt_"] > div,
+button[key^="ad_prompt_"] > div,
 div.stButton > button[key^="prompt_"] > *,
+div.stButton > button[key^="entra_prompt_"] > *,
+div.stButton > button[key^="ad_prompt_"] > *,
 .stButton > button[key^="prompt_"] > *,
-button[key^="prompt_"] > * {
+.stButton > button[key^="entra_prompt_"] > *,
+.stButton > button[key^="ad_prompt_"] > *,
+button[key^="prompt_"] > *,
+button[key^="entra_prompt_"] > *,
+button[key^="ad_prompt_"] > * {
     width: 100% !important;
     height: 100% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    line-height: 1.2 !important;
+    padding: 0 !important;
+    margin: 0 !important;
     overflow: hidden !important;
     box-sizing: border-box !important;
 }
 
-/* Responsive - maintain uniformity across all screen sizes */
+/* RESPONSIVE BREAKPOINTS - MAINTAIN UNIFORMITY */
 @media (max-width: 1300px) {
     div.stButton:has(button[key^="prompt_"]),
+    div.stButton:has(button[key^="entra_prompt_"]),
+    div.stButton:has(button[key^="ad_prompt_"]),
     .stButton:has(button[key^="prompt_"]),
+    .stButton:has(button[key^="entra_prompt_"]),
+    .stButton:has(button[key^="ad_prompt_"]),
     div.stButton > button[key^="prompt_"],
+    div.stButton > button[key^="entra_prompt_"],
+    div.stButton > button[key^="ad_prompt_"],
     .stButton > button[key^="prompt_"],
+    .stButton > button[key^="entra_prompt_"],
+    .stButton > button[key^="ad_prompt_"],
     button[key^="prompt_"],
+    button[key^="entra_prompt_"],
+    button[key^="ad_prompt_"],
     div[data-testid="column"]:has(button[key^="prompt_"]),
-    [data-testid="column"]:has(button[key^="prompt_"]) {
-        width: 350px !important;
-        min-width: 350px !important;
-        max-width: 350px !important;
-        height: 120px !important;
-        min-height: 120px !important;
-        max-height: 120px !important;
-    }
-    
-    div.stButton > button[key^="prompt_"],
-    .stButton > button[key^="prompt_"],
-    button[key^="prompt_"] {
-        font-size: 13px !important;
+    div[data-testid="column"]:has(button[key^="entra_prompt_"]),
+    div[data-testid="column"]:has(button[key^="ad_prompt_"]),
+    [data-testid="column"]:has(button[key^="prompt_"]),
+    [data-testid="column"]:has(button[key^="entra_prompt_"]),
+    [data-testid="column"]:has(button[key^="ad_prompt_"]) {
+        width: 340px !important;
+        min-width: 340px !important;
+        max-width: 340px !important;
+        height: 110px !important;
+        min-height: 110px !important;
+        max-height: 110px !important;
     }
 }
 
 @media (max-width: 1100px) {
     div.stButton:has(button[key^="prompt_"]),
+    div.stButton:has(button[key^="entra_prompt_"]),
+    div.stButton:has(button[key^="ad_prompt_"]),
     .stButton:has(button[key^="prompt_"]),
+    .stButton:has(button[key^="entra_prompt_"]),
+    .stButton:has(button[key^="ad_prompt_"]),
     div.stButton > button[key^="prompt_"],
+    div.stButton > button[key^="entra_prompt_"],
+    div.stButton > button[key^="ad_prompt_"],
     .stButton > button[key^="prompt_"],
+    .stButton > button[key^="entra_prompt_"],
+    .stButton > button[key^="ad_prompt_"],
     button[key^="prompt_"],
+    button[key^="entra_prompt_"],
+    button[key^="ad_prompt_"],
     div[data-testid="column"]:has(button[key^="prompt_"]),
-    [data-testid="column"]:has(button[key^="prompt_"]) {
+    div[data-testid="column"]:has(button[key^="entra_prompt_"]),
+    div[data-testid="column"]:has(button[key^="ad_prompt_"]),
+    [data-testid="column"]:has(button[key^="prompt_"]),
+    [data-testid="column"]:has(button[key^="entra_prompt_"]),
+    [data-testid="column"]:has(button[key^="ad_prompt_"]) {
         width: 300px !important;
         min-width: 300px !important;
         max-width: 300px !important;
-        height: 110px !important;
-        min-height: 110px !important;
-        max-height: 110px !important;
-    }
-    
-    div.stButton > button[key^="prompt_"],
-    .stButton > button[key^="prompt_"],
-    button[key^="prompt_"] {
-        font-size: 12px !important;
+        height: 100px !important;
+        min-height: 100px !important;
+        max-height: 100px !important;
     }
     
     .prompt-row {
@@ -701,27 +785,36 @@ button[key^="prompt_"] > * {
     .prompt-row {
         flex-direction: column;
         align-items: center;
+        gap: 15px;
     }
     
     div.stButton:has(button[key^="prompt_"]),
+    div.stButton:has(button[key^="entra_prompt_"]),
+    div.stButton:has(button[key^="ad_prompt_"]),
     .stButton:has(button[key^="prompt_"]),
+    .stButton:has(button[key^="entra_prompt_"]),
+    .stButton:has(button[key^="ad_prompt_"]),
     div.stButton > button[key^="prompt_"],
+    div.stButton > button[key^="entra_prompt_"],
+    div.stButton > button[key^="ad_prompt_"],
     .stButton > button[key^="prompt_"],
+    .stButton > button[key^="entra_prompt_"],
+    .stButton > button[key^="ad_prompt_"],
     button[key^="prompt_"],
+    button[key^="entra_prompt_"],
+    button[key^="ad_prompt_"],
     div[data-testid="column"]:has(button[key^="prompt_"]),
-    [data-testid="column"]:has(button[key^="prompt_"]) {
-        width: 320px !important;
-        min-width: 320px !important;
-        max-width: 320px !important;
-        height: 100px !important;
-        min-height: 100px !important;
-        max-height: 100px !important;
-    }
-    
-    div.stButton > button[key^="prompt_"],
-    .stButton > button[key^="prompt_"],
-    button[key^="prompt_"] {
-        font-size: 12px !important;
+    div[data-testid="column"]:has(button[key^="entra_prompt_"]),
+    div[data-testid="column"]:has(button[key^="ad_prompt_"]),
+    [data-testid="column"]:has(button[key^="prompt_"]),
+    [data-testid="column"]:has(button[key^="entra_prompt_"]),
+    [data-testid="column"]:has(button[key^="ad_prompt_"]) {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+        height: 90px !important;
+        min-height: 90px !important;
+        max-height: 90px !important;
     }
 }
 
@@ -749,6 +842,103 @@ button[key^="prompt_"] > * {
 }
 </style>
 """, unsafe_allow_html=True)
+
+# Global tooltip JS/CSS initializer for prompt hover full-text display
+st.markdown(
+    """
+    <style>
+    /* Wrapper and overlay for full-text prompt hover (pure CSS, no JS) */
+    .prompt-wrapper { position: relative; display: block; width: 100%; }
+    .prompt-overlay {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        display: none;
+        background: #111;
+        color: #fff;
+        border: 1px solid #444;
+        border-radius: 12px;
+        padding: 12px 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        z-index: 9999999;
+        line-height: 1.4;
+        font-size: 14px;
+        max-width: min(600px, 90vw);
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+    .prompt-wrapper:has(button:hover) .prompt-overlay { display: block; }
+    @media (max-width: 768px) {
+        .prompt-overlay { max-width: 90vw; }
+    }
+    .prompt-tooltip-box {
+        position: absolute;
+        max-width: 600px;
+        min-width: 320px;
+        background: #111;
+        color: #fff;
+        border: 1px solid #444;
+        border-radius: 12px;
+        padding: 12px 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        z-index: 9999999;
+        display: none;
+        line-height: 1.4;
+        font-size: 14px;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+    @media (max-width: 768px) {
+        .prompt-tooltip-box { max-width: 90vw; min-width: 60vw; }
+    }
+    </style>
+    <script>
+    (function(){
+      if (window.__promptTooltipInit) return; // init once per rerun
+      window.__promptTooltipInit = true;
+      function ensureBox(){
+        let box = document.getElementById('prompt-tooltip-box');
+        if (!box) {
+          box = document.createElement('div');
+          box.id = 'prompt-tooltip-box';
+          box.className = 'prompt-tooltip-box';
+          document.body.appendChild(box);
+        }
+        return box;
+      }
+      window.showPromptTooltip = function(btn){
+        try {
+          const box = ensureBox();
+          const full = btn.getAttribute('data-fulltext') || btn.innerText || '';
+          box.textContent = full;
+          const rect = btn.getBoundingClientRect();
+          const top = rect.bottom + window.scrollY + 8;
+          let left = rect.left + window.scrollX;
+          // prevent off-screen right overflow
+          box.style.display = 'block';
+          box.style.left = left + 'px';
+          box.style.top = top + 'px';
+          const boxRect = box.getBoundingClientRect();
+          const overflowX = (boxRect.right) - (window.scrollX + window.innerWidth - 12);
+          if (overflowX > 0) {
+            left = Math.max(12 + window.scrollX, left - overflowX);
+            box.style.left = left + 'px';
+          }
+        } catch(e) { /* no-op */ }
+      }
+      window.hidePromptTooltip = function(){
+        const box = document.getElementById('prompt-tooltip-box');
+        if (box) box.style.display = 'none';
+      }
+    })();
+    </script>
+    """,
+    unsafe_allow_html=True,
+)
 
 def render_header():
     is_authed = st.session_state.get("authenticated", False)
@@ -847,6 +1037,8 @@ def create_custom_sidebar_navigation():
         if selected and selected in page_mapping:
             new_page = page_mapping[selected]
             if new_page != st.session_state.get("active_page"):
+                # Track last page to detect page entry
+                st.session_state["last_active_page"] = st.session_state.get("active_page")
                 st.session_state["active_page"] = new_page
                 st.rerun()
 
@@ -855,28 +1047,92 @@ def create_fallback_navigation(navigation_options, page_mapping, current_page):
     selected = None
     for i, (label, page_key) in enumerate(zip(navigation_options, page_mapping.values())):
         is_active = current_page == page_key
-        
-        if st.button(
-            label, 
-            key=f"fallback_nav_{page_key}",
-            use_container_width=True,
-            type="primary" if is_active else "secondary"
-        ):
-            selected = label
-            
-        # Apply active state CSS
+
         if is_active:
-            st.markdown(f"""
-            <style>
-            section[data-testid="stSidebar"] button[key="fallback_nav_{page_key}"] {{
-                background: #eaf3ff !important;
-                color: #007bff !important;
-                border-left: 4px solid #007bff !important;
-            }}
-            </style>
-            """, unsafe_allow_html=True)
+            # Render a non-clickable highlighted block for the active page
+            st.markdown(
+                f"""
+                <div style="
+                    width: 100%; padding: 12px 16px; margin: 0 0 8px 0;
+                    background: #000; color: #fff; border-left: 6px solid #fff;
+                    border-radius: 8px; font-weight: 700; box-sizing: border-box;">
+                    {label}
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+        else:
+            if st.button(
+                label,
+                key=f"fallback_nav_{page_key}",
+                use_container_width=True,
+                type="secondary",
+            ):
+                selected = label
     
     return selected
+
+
+def _clear_main_chat_state():
+    # End-user assistant
+    for k in [
+        "chat_history", "chat_input_value", "last_user_input",
+        "original_prompt_value", "chat_text_input"
+    ]:
+        if k in st.session_state:
+            del st.session_state[k]
+
+
+def _clear_orchestrator_chat_state():
+    # Admin/orchestrator assistant
+    for k in [
+        "orchestrator_chat_history",
+        "orch_chat_input_value",
+        "orch_original_prompt_value",
+        "orch_chat_text_input",
+        "orch_prefill_submit",
+    ]:
+        if k in st.session_state:
+            del st.session_state[k]
+
+
+def _clear_entra_chat_state():
+    # Microsoft Entra services
+    for k in [
+        "entra_chat_history", "entra_chat_input_value",
+        "entra_last_user_input", "entra_original_prompt_value", "entra_chat_text_input",
+        "entra_agent_history"
+    ]:
+        if k in st.session_state:
+            del st.session_state[k]
+
+
+def handle_page_entry(active_page: str):
+    """Reset chat state when the user navigates INTO a chat page from another page.
+    Keeps the chat during continuous use of the same page.
+    """
+    last = st.session_state.get("last_active_page")
+    if last == active_page:
+        return  # no page switch
+
+    if active_page == "main_chat":
+        _clear_main_chat_state()
+    elif active_page == "orchestrator_chat":
+        _clear_orchestrator_chat_state()
+    elif active_page == "entra_id_assistant":
+        _clear_entra_chat_state()
+    elif active_page == "active_directory_assistant":
+        _clear_ad_chat_state()
+
+
+def _clear_ad_chat_state():
+    # Active Directory Service assistant (preserve ad_thread_id)
+    for k in [
+        "ad_chat_history", "ad_chat_input_value",
+        "ad_last_user_input", "ad_original_prompt_value", "ad_chat_text_input"
+    ]:
+        if k in st.session_state:
+            del st.session_state[k]
 
 def create_disabled_sidebar_navigation():
     """FIXED: Create disabled sidebar navigation WITHOUT using components"""
@@ -944,13 +1200,16 @@ if st.session_state.get("authenticated", False):
 else:
     create_disabled_sidebar_navigation()
 
-# Handle logout
+# Handle logout - UPDATED WITH AD SESSION VARIABLES
 if st.query_params.get("app_logout") == "1":
     for k in [
         "authenticated", "access_token", "thread_id", "chat_history", "user_info",
         "orch_thread_id", "orchestrator_chat_history", "active_page", "selected_prompt", 
         "chat_input_value", "last_input", "original_prompt_value", "entra_thread_id", 
-        "entra_chat_history", "show_user_input", "show_group_input", "show_create_user_form"
+        "entra_chat_history", "entra_agent_thread_id", "entra_agent_history",
+        "show_user_input", "show_group_input", "show_create_user_form",
+        "entra_chat_input_value", "entra_original_prompt_value", "ad_thread_id", 
+        "ad_chat_history", "ad_chat_input_value", "ad_original_prompt_value"  # ← ADDED AD VARIABLES
     ]:
         st.session_state.pop(k, None)
     try:
@@ -985,6 +1244,13 @@ if "code" in st.query_params:
 def show_intro():
     st.markdown('<div class="centered-intro">You are using "Assistant for End users" functionality​</div>', unsafe_allow_html=True)
 
+def show_entra_intro():
+    st.markdown('<div class="centered-intro">🔐 Microsoft Entra Service - IAM Operations</div>', unsafe_allow_html=True)
+
+# NEW: ADD AD INTRO FUNCTION
+def show_ad_intro():
+    st.markdown('<div class="centered-intro">🏢 Active Directory Service - AD Provisioning Operations</div>', unsafe_allow_html=True)
+
 def load_prompts_from_file(filepath: str = "prompts.json"):
     """Load prompts from JSON file"""
     try:
@@ -998,8 +1264,81 @@ def load_prompts_from_file(filepath: str = "prompts.json"):
         st.error(f"Error reading prompts file '{filepath}'. Please check the JSON format.")
         return []
 
+def load_entra_prompts_from_file(filepath: str = "entraPrompts.json"):
+    """Load Entra prompts from JSON file"""
+    try:
+        with open(filepath, 'r') as f:
+            data = json.load(f)
+        return data.get('prompts', [])
+    except FileNotFoundError:
+        st.warning(f"Entra prompts file '{filepath}' not found. Using default prompts.")
+        # Return default prompts if file doesn't exist
+        return [
+            "List all users in the organization",
+            "Show me all security groups",
+            "Create a new user account with standard permissions",
+            "Reset password for a specific user",
+            "Add user to a security group",
+            "Remove user from a security group",
+            "List all applications registered in Entra ID",
+            "Show conditional access policies",
+            "Generate IAM audit report for compliance"
+        ]
+    except json.JSONDecodeError:
+        st.error(f"Error reading Entra prompts file '{filepath}'. Please check the JSON format.")
+        return []
+
+# NEW: ADD AD PROMPTS LOADING FUNCTION
+def load_ad_prompts_from_file(filepath: str = "adPrompts.json"):
+    """Load AD prompts from JSON file"""
+    try:
+        with open(filepath, 'r') as f:
+            data = json.load(f)
+        return data.get('prompts', [])
+    except FileNotFoundError:
+        st.warning(f"AD prompts file '{filepath}' not found. Using default prompts.")
+        # Return default AD prompts if file doesn't exist
+        return [
+            "List all users in Active Directory",
+            "Show me all security groups", 
+            "List groups without owners",
+            "Get user details for a specific user",
+            "Show group members for a security group",
+            "List inactive users",
+            "Find groups not following naming convention",
+            "Show groups with zero members",
+            "List groups with inactive owners",
+            "Create a new user account",
+            "Create a new security group",
+            "Add user to a group"
+        ]
+    except json.JSONDecodeError:
+        st.error(f"Error reading AD prompts file '{filepath}'. Please check the JSON format.")
+        return []
+
+# NEW: ADD ADMIN PROMPTS LOADING FUNCTION
+def load_admin_prompts_from_file(filepath: str = "adminPrompts.json"):
+    """Load Admin (Orchestrator) prompts from JSON file"""
+    try:
+        with open(filepath, 'r') as f:
+            data = json.load(f)
+        return data.get('prompts', [])
+    except FileNotFoundError:
+        st.warning(f"Admin prompts file '{filepath}' not found. Using default prompts.")
+        return [
+            "List ownerless groups in Entra ID (top 10)",
+            "Show users added to Global Administrator in last 30 days",
+            "Generate SoX access review summary for Finance apps",
+            "Create a security group 'Contractors-AppX' with owner 'john.doe@contoso.com'",
+            "Add 'jane.doe@contoso.com' to group 'HR-Privileged'",
+            "Remove user 'temp.user@contoso.com' from 'All-Employees' (with confirmation)",
+        ]
+    except json.JSONDecodeError:
+        st.error(f"Error reading Admin prompts file '{filepath}'. Please check the JSON format.")
+        return []
+
 def show_suggested_prompts():
-    """Display ALL prompts in simple sequential 3-column grid with BULLETPROOF fixed size"""
+    """FIXED: Display prompts with UNIFORM fixed dimensions using Method 3 approach"""
     
     # Load prompts from JSON file
     prompts = load_prompts_from_file()
@@ -1033,144 +1372,251 @@ def show_suggested_prompts():
                 
                 with cols_row[c]:
                     if prompt_index < len(prompts):
-                        # Display prompt button with aggressive text truncation
+                        # Display prompt button with uniform dimensions
                         prompt_text = prompts[prompt_index]
                         emoji = emoji_map.get(prompt_index, "💡")
                         
-                        # Aggressive truncation to ensure uniform button appearance
+                        # Smart text truncation for uniform appearance
                         display_text = prompt_text
                         if len(prompt_text) > 45:
                             display_text = prompt_text[:42] + "..."
                         
                         button_text = f"{emoji}\n\n{display_text}"
-                        
-                        if st.button(button_text, key=f"prompt_{r}_{c}"):
+                        # Wrap button and overlay in a container so CSS :has can show overlay on hover
+                        st.markdown('<div class="prompt-wrapper">', unsafe_allow_html=True)
+                        # THE KEY CHANGE: Add use_container_width=True (Method 3 style)
+                        if st.button(
+                            button_text, 
+                            key=f"prompt_{r}_{c}",
+                            help=prompt_text,
+                            use_container_width=True  # ← THE MAGIC PARAMETER!
+                        ):
                             st.session_state["chat_input_value"] = prompt_text  # Use full text
                             st.session_state["original_prompt_value"] = prompt_text
                             st.rerun()
+                        # Full-text overlay (pure CSS, shown on hover)
+                        st.markdown(
+                            f'<div class="prompt-overlay">{html.escape(prompt_text)}</div>',
+                            unsafe_allow_html=True,
+                        )
+                        st.markdown('</div>', unsafe_allow_html=True)
+                    
                     else:
                         # Empty space to maintain grid structure
-                        st.markdown('<div style="height: 130px; width: 400px; visibility: hidden;"></div>', unsafe_allow_html=True)
+                        st.markdown('<div style="height: 120px; visibility: hidden;"></div>', unsafe_allow_html=True)
             
             st.markdown('</div>', unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
 
-def main_chat_page():
-    if "access_token" not in st.session_state or not st.session_state["access_token"]:
-        st.error("Access token is not found or invalid.", icon="🚨")
+def show_admin_suggested_prompts():
+    """Display Admin (Orchestrator) prompts with uniform dimensions (Method 3)."""
+    prompts = load_admin_prompts_from_file()
+    if not prompts:
+        st.warning("No Admin prompts found. Please add prompts to the adminPrompts.json file.")
         return
 
-    if "thread_id" not in st.session_state:
-        try:
-            headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
-            r = requests.post(f"{API_BASE}/thread", timeout=120, headers=headers)
-            r.raise_for_status()
-            st.session_state["thread_id"] = r.json()["thread_id"]
-        except Exception as e:
-            st.error(f"Failed to create thread: {str(e)}", icon="🚨")
-            st.stop()
+    emoji_map = {
+        0: "👑", 1: "🆕", 2: "📋", 3: "👥", 4: "➕", 5: "➖",
+        6: "🛡️", 7: "🔐", 8: "📊", 9: "🔍", 10: "⚙️", 11: "🔧"
+    }
 
-    if "chat_history" not in st.session_state:
-        st.session_state["chat_history"] = []
+    cols = 3
+    rows = (len(prompts) + cols - 1) // cols
+
+    with st.container():
+        st.markdown('<div class="prompt-grid-container">', unsafe_allow_html=True)
+        for r in range(rows):
+            st.markdown('<div class="prompt-row">', unsafe_allow_html=True)
+            cols_row = st.columns([1, 1, 1], gap="medium")
+            for c in range(cols):
+                prompt_index = r * cols + c
+                with cols_row[c]:
+                    if prompt_index < len(prompts):
+                        prompt_text = prompts[prompt_index]
+                        emoji = emoji_map.get(prompt_index, "👑")
+                        display_text = prompt_text if len(prompt_text) <= 45 else (prompt_text[:42] + "...")
+                        button_text = f"{emoji}\n\n{display_text}"
+                        st.markdown('<div class="prompt-wrapper">', unsafe_allow_html=True)
+                        if st.button(
+                            button_text,
+                            key=f"admin_prompt_{r}_{c}",
+                            help=prompt_text,
+                            use_container_width=True,
+                        ):
+                            st.session_state["orch_chat_input_value"] = prompt_text
+                            st.session_state["orch_original_prompt_value"] = prompt_text
+                            st.rerun()
+                        st.markdown(
+                            f'<div class="prompt-overlay">{html.escape(prompt_text)}</div>',
+                            unsafe_allow_html=True,
+                        )
+                        st.markdown('</div>', unsafe_allow_html=True)
+                    else:
+                        st.markdown('<div style="height: 120px; visibility: hidden;"></div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+def show_entra_suggested_prompts():
+    """Display Entra-specific prompts with UNIFORM fixed dimensions using Method 3 approach"""
     
-    # Initialize chat_input_value if not exists
-    if "chat_input_value" not in st.session_state:
-        st.session_state["chat_input_value"] = ""
-
-    container_class = "message-container no-messages" if len(st.session_state["chat_history"]) == 0 else "message-container"
-    st.markdown(f'<div class="{container_class}">', unsafe_allow_html=True)
+    # Load Entra prompts from JSON file
+    prompts = load_entra_prompts_from_file()
     
-    # Show intro and suggested prompts only if no chat history
-    if len(st.session_state["chat_history"]) == 0:
-        show_intro()
-        show_suggested_prompts()
-
-    container = st.container()
-    for user_msg, agent_msg in st.session_state["chat_history"]:
-        with container:
-            with st.chat_message("user"):
-                st.markdown(f"**You:** {user_msg}")
-            with st.chat_message("assistant"):
-                st.markdown(f"**IAM Assistant:** {agent_msg}")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # Create chat input with dynamic value
-    chat_placeholder = "Hi there! Geni is ready to help you on IAM – start using me"
+    if not prompts:
+        st.warning("No Entra prompts found. Please add prompts to the entraPrompts.json file.")
+        return
     
-    # Use regular chat input but check if there's a pre-filled value
-    if st.session_state.get("chat_input_value"):
-        # Show the pre-filled text input without message or button
-        user_input = st.text_input(
-            "Your message:", 
-            value=st.session_state["chat_input_value"],
-            key="chat_text_input",
-            placeholder=chat_placeholder
-        )
+    # Emoji mappings for Entra prompts (IAM/Security focused)
+    emoji_map = {
+        0: "👥", 1: "🔒", 2: "🆕", 3: "🔑", 4: "➕", 5: "➖",
+        6: "📱", 7: "🛡️", 8: "📋", 9: "🔍", 10: "⚙️", 11: "🔧", 12: "📊"
+    }
+    
+    cols = 3
+    rows = (len(prompts) + cols - 1) // cols
+    
+    # Create centered container for the grid
+    with st.container():
+        st.markdown('<div class="prompt-grid-container">', unsafe_allow_html=True)
         
-        # Handle Enter key press - auto-submit when user input changes
-        if user_input != st.session_state.get("last_user_input", ""):
-            st.session_state["last_user_input"] = user_input
-            # Auto-submit on Enter (when user input changes)
-            if user_input.strip() and user_input != st.session_state.get("original_prompt_value", ""):
-                # Store the user input before processing
-                current_user_input = user_input
-                
-                # Clear the pre-filled value
-                st.session_state["chat_input_value"] = ""
-                st.session_state["original_prompt_value"] = ""
-                
-                # Process the message
-                with st.spinner("Thinking..."):
-                    try:
-                        headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
-                        payload = {"thread_id": st.session_state["thread_id"], "message": current_user_input}
-                        r = requests.post(f"{API_BASE}/chat", json=payload, timeout=120, headers=headers)
-                        r.raise_for_status()
-                        reply = r.json().get("reply", "")
-                        
-                        # Check for server error responses
-                        is_server_busy = False
-                        if isinstance(reply, dict) and reply.get('code') == 'server_error':
-                            reply = "**Agent is currently busy, please wait a moment and try again.**"
-                            is_server_busy = True
-                        elif isinstance(reply, str):
-                            try:
-                                parsed = ast.literal_eval(reply)
-                                if isinstance(parsed, dict) and parsed.get('code') == 'server_error':
-                                    reply = "**Agent is currently busy, please wait a moment and try again.**"
-                                    is_server_busy = True
-                            except Exception:
-                                if 'server_error' in reply:
-                                    reply = "**Agent is currently busy, please wait a moment and try again.**"
-                                    is_server_busy = True
-                    except Exception:
-                        reply = "**Agent is currently busy, please wait a moment and try again.**"
-                        is_server_busy = True
-                
-                # If server is busy, put the original query back in the input
-                if is_server_busy:
-                    st.session_state["chat_input_value"] = current_user_input
-                
-                typing_placeholder = st.empty()
-                typing_message = ""
-                for char in reply:
-                    typing_message += char
-                    typing_placeholder.markdown(f"**IAM Assistant**: {typing_message}")
-                    time.sleep(0.01)
-                st.session_state["chat_history"].append((current_user_input, reply))
-                st.rerun()
-    else:
-        # Regular chat input when no pre-filled value
-        prompt = st.chat_input(chat_placeholder)
-        if prompt:
-            # Store the user input before processing
-            current_user_input = prompt
+        # Render each row sequentially
+        for r in range(rows):
+            st.markdown('<div class="prompt-row">', unsafe_allow_html=True)
             
+            # Create columns for this row
+            cols_row = st.columns([1, 1, 1], gap="medium")
+            
+            for c in range(cols):
+                prompt_index = r * cols + c
+                
+                with cols_row[c]:
+                    if prompt_index < len(prompts):
+                        # Display prompt button with uniform dimensions
+                        prompt_text = prompts[prompt_index]
+                        emoji = emoji_map.get(prompt_index, "🔐")
+                        
+                        # Smart text truncation for uniform appearance
+                        display_text = prompt_text
+                        if len(prompt_text) > 45:
+                            display_text = prompt_text[:42] + "..."
+                        
+                        button_text = f"{emoji}\n\n{display_text}"
+                        # Wrap button and overlay in a container so CSS :has can show overlay on hover
+                        st.markdown('<div class="prompt-wrapper">', unsafe_allow_html=True)
+                        # THE KEY CHANGE: Add use_container_width=True (Method 3 style)
+                        if st.button(
+                            button_text, 
+                            key=f"entra_prompt_{r}_{c}",  # Different key prefix
+                            help=prompt_text,
+                            use_container_width=True  # ← THE MAGIC PARAMETER!
+                        ):
+                            st.session_state["entra_chat_input_value"] = prompt_text  # Use full text
+                            st.session_state["entra_original_prompt_value"] = prompt_text
+                            st.rerun()
+                        # Full-text overlay (pure CSS, shown on hover)
+                        st.markdown(
+                            f'<div class="prompt-overlay">{html.escape(prompt_text)}</div>',
+                            unsafe_allow_html=True,
+                        )
+                        st.markdown('</div>', unsafe_allow_html=True)
+                    
+                    else:
+                        # Empty space to maintain grid structure
+                        st.markdown('<div style="height: 120px; visibility: hidden;"></div>', unsafe_allow_html=True)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# NEW: ADD AD SUGGESTED PROMPTS FUNCTION
+def show_ad_suggested_prompts():
+    """Display AD-specific prompts with UNIFORM fixed dimensions using Method 3 approach"""
+    
+    # Load AD prompts from JSON file
+    prompts = load_ad_prompts_from_file()
+    
+    if not prompts:
+        st.warning("No AD prompts found. Please add prompts to the adPrompts.json file.")
+        return
+    
+    # Emoji mappings for AD prompts (Directory focused)
+    emoji_map = {
+        0: "👥", 1: "🔒", 2: "👑", 3: "📋", 4: "👤", 5: "⏰",
+        6: "📝", 7: "🚫", 8: "👔", 9: "🔍", 10: "⚙️", 11: "🔧", 12: "📊"
+    }
+    
+    cols = 3
+    rows = (len(prompts) + cols - 1) // cols
+    
+    # Create centered container for the grid
+    with st.container():
+        st.markdown('<div class="prompt-grid-container">', unsafe_allow_html=True)
+        
+        # Render each row sequentially
+        for r in range(rows):
+            st.markdown('<div class="prompt-row">', unsafe_allow_html=True)
+            
+            # Create columns for this row
+            cols_row = st.columns([1, 1, 1], gap="medium")
+            
+            for c in range(cols):
+                prompt_index = r * cols + c
+                
+                with cols_row[c]:
+                    if prompt_index < len(prompts):
+                        # Display prompt button with uniform dimensions
+                        prompt_text = prompts[prompt_index]
+                        emoji = emoji_map.get(prompt_index, "🏢")
+                        
+                        # Smart text truncation for uniform appearance
+                        display_text = prompt_text
+                        if len(prompt_text) > 45:
+                            display_text = prompt_text[:42] + "..."
+                        
+                        button_text = f"{emoji}\n\n{display_text}"
+                        # Wrap button and overlay in a container so CSS :has can show overlay on hover
+                        st.markdown('<div class="prompt-wrapper">', unsafe_allow_html=True)
+                        # THE KEY CHANGE: Add use_container_width=True (Method 3 style)
+                        if st.button(
+                            button_text, 
+                            key=f"ad_prompt_{r}_{c}",  # Different key prefix
+                            help=prompt_text,
+                            use_container_width=True  # ← THE MAGIC PARAMETER!
+                        ):
+                            st.session_state["ad_chat_input_value"] = prompt_text  # Use full text
+                            st.session_state["ad_original_prompt_value"] = prompt_text
+                            st.rerun()
+                        # Full-text overlay (pure CSS, shown on hover)
+                        st.markdown(
+                            f'<div class="prompt-overlay">{html.escape(prompt_text)}</div>',
+                            unsafe_allow_html=True,
+                        )
+                        st.markdown('</div>', unsafe_allow_html=True)
+                    
+                    else:
+                        # Empty space to maintain grid structure
+                        st.markdown('<div style="height: 120px; visibility: hidden;"></div>', unsafe_allow_html=True)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+
+def execute_chat_query(user_input, chat_container):
+    """Execute the chat query and show response at top"""
+    
+    # HIDE PROMPTS AND SHOW THINKING AT THE TOP
+    with chat_container:
+        # Clear intro and prompts by adding user message
+        with st.chat_message("user"):
+            st.markdown(f"**You:** {user_input}")
+        
+        # Show thinking and typing response AT THE TOP
+        with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
                 try:
                     headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
-                    payload = {"thread_id": st.session_state["thread_id"], "message": current_user_input}
+                    payload = {"thread_id": st.session_state["thread_id"], "message": user_input}
                     r = requests.post(f"{API_BASE}/chat", json=payload, timeout=120, headers=headers)
                     r.raise_for_status()
                     reply = r.json().get("reply", "")
@@ -1194,66 +1640,390 @@ def main_chat_page():
                     reply = "**Agent is currently busy, please wait a moment and try again.**"
                     is_server_busy = True
             
-            # If server is busy, put the original query back in the input
-            if is_server_busy:
-                st.session_state["chat_input_value"] = current_user_input
-            
+            # Show typing effect AT THE TOP
             typing_placeholder = st.empty()
             typing_message = ""
             for char in reply:
                 typing_message += char
-                typing_placeholder.markdown(f"**IAM Assistant**: {typing_message}")
+                typing_placeholder.markdown(f"**IAM Assistant:** {typing_message}")
                 time.sleep(0.01)
-            st.session_state["chat_history"].append((current_user_input, reply))
-            st.rerun()
+            
+            # If server is busy, put the original query back in the input
+            if is_server_busy:
+                st.session_state["chat_input_value"] = user_input
+    
+    # Add to chat history and rerun
+    st.session_state["chat_history"].append((user_input, reply))
+    st.rerun()
 
-def _render_result_as_table_or_text(result_str: str, role_label: str = "Orchestrator"):
-    """Detects JSON returned by the ProvisioningAgent and renders as a table. Falls back to plain text if not JSON."""
+def execute_entra_query(user_input, chat_container):
+    """Execute Entra query via new /entra/agent endpoints with thinking effect."""
+    # Prepare prior chat history for the agent
+    prior = st.session_state.get("entra_agent_history", [])
+    headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+    payload = {
+        "thread_id": st.session_state.get("entra_agent_thread_id"),
+        "message": user_input,
+        "chat_history": prior,
+    }
 
-    # Try to parse JSON
-    try:
-        parsed = json.loads(result_str)
-    except Exception:
-        parsed = None
+    # HIDE PROMPTS AND SHOW THINKING AT THE TOP
+    with chat_container:
+        with st.chat_message("user"):
+            st.markdown(f"**You:** {user_input}")
+        with st.chat_message("assistant"):
+            with st.spinner("Executing IAM operation..."):
+                try:
+                    r = requests.post(f"{API_BASE}/entra/agent/chat", json=payload, timeout=120, headers=headers)
+                    r.raise_for_status()
+                    response_data = r.json()
+                    action = response_data.get("action", "none")
+                    result = response_data.get("result", "No response received")
+                except requests.exceptions.RequestException as e:
+                    action = "error"
+                    result = f"Failed to execute command: {str(e)}"
+                except Exception as e:
+                    action = "error"
+                    result = f"Unexpected error: {str(e)}"
 
-    if isinstance(parsed, list):
-        if len(parsed) == 0:
-            st.info("No rows.")
-            return
-        try:
-            import pandas as pd
-            if isinstance(parsed[0], dict):
-                st.dataframe(pd.DataFrame(parsed), use_container_width=True)
-            else:
-                st.dataframe(pd.DataFrame(parsed, columns=["Value"]), use_container_width=True)
-        except Exception:
-            st.table(parsed)
-    elif isinstance(parsed, dict):
-        if "groups" in parsed and isinstance(parsed["groups"], list):
-            st.markdown(f"**Total:** {parsed.get('count', len(parsed['groups']))}")
-            try:
-                import pandas as pd
-                groups = parsed["groups"]
-                if groups and isinstance(groups[0], dict):
-                    st.dataframe(pd.DataFrame(groups), use_container_width=True)
-                else:
-                    st.table(groups)
-            except Exception:
-                st.table(parsed["groups"])
-        else:
-            try:
-                import pandas as pd
-                st.dataframe(pd.DataFrame([parsed]), use_container_width=True)
-            except Exception:
-                st.json(parsed)
-    else:
-        st.markdown(f"**{role_label}**: {result_str}")
+            # Show typing effect AT THE TOP
+            if action and action != "none":
+                st.markdown(f"**Action:** `{action}`")
+            typing_placeholder = st.empty()
+            display_result = result if isinstance(result, str) else str(result)
+            typing_message = ""
+            for char in display_result:
+                typing_message += char
+                typing_placeholder.markdown(f"**Microsoft Entra:** {typing_message}")
+                time.sleep(0.01)
 
-def orchestrator_chat_page():
+    # Maintain both transcript (for display) and agent chat history (for API)
+    st.session_state.setdefault("entra_chat_history", [])
+    st.session_state["entra_chat_history"].append((user_input, result, action))
+    st.session_state.setdefault("entra_agent_history", [])
+    st.session_state["entra_agent_history"].append({"role": "user", "content": user_input})
+    st.session_state["entra_agent_history"].append({"role": "assistant", "content": str(result)})
+    st.rerun()
+
+# NEW: ADD AD QUERY EXECUTION FUNCTION
+def execute_ad_query(user_input, chat_container):
+    """Execute AD query with thinking and typing effect at the top"""
+    
+    # HIDE PROMPTS AND SHOW THINKING AT THE TOP
+    with chat_container:
+        # Clear intro and prompts by adding user message
+        with st.chat_message("user"):
+            st.markdown(f"**You:** {user_input}")
+        
+        # Show thinking and typing response AT THE TOP
+        with st.chat_message("assistant"):
+            with st.spinner("Executing AD operation..."):
+                try:
+                    headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+                    payload = {
+                        "thread_id": st.session_state["ad_thread_id"],
+                        "message": user_input
+                    }
+                    
+                    r = requests.post(f"{API_BASE}/ad/chat", json=payload, timeout=120, headers=headers)
+                    r.raise_for_status()
+                    
+                    response_data = r.json()
+                    action = response_data.get("action", "ad_provision")
+                    result = response_data.get("result", "No response received")
+                    agent = response_data.get("agent", "AD_Provisioning_Agent")
+                    
+                except requests.exceptions.RequestException as e:
+                    action = "error"
+                    result = f"Failed to execute AD command: {str(e)}"
+                    agent = "AD_Provisioning_Agent"
+                except Exception as e:
+                    action = "error"
+                    result = f"Unexpected error: {str(e)}"
+                    agent = "AD_Provisioning_Agent"
+            
+            # Show typing effect AT THE TOP
+            st.markdown(f"**Action:** `{action}`")
+            
+            typing_placeholder = st.empty()
+            typing_message = ""
+            
+            # Format the response for better display
+            display_result = result
+            if isinstance(result, list):
+                display_result = "\n".join([f"• {item}" for item in result])
+            elif isinstance(result, str) and result.startswith("{"):
+                # Try to parse and format JSON
+                try:
+                    json_result = json.loads(result)
+                    if isinstance(json_result, dict):
+                        display_result = json.dumps(json_result, indent=2)
+                except:
+                    pass
+            
+            for char in str(display_result):
+                typing_message += char
+                typing_placeholder.markdown(f"**{agent}:** {typing_message}")
+                time.sleep(0.01)
+    
+    # Add to chat history and rerun
+    st.session_state["ad_chat_history"].append((user_input, result, action))
+    st.rerun()
+
+def main_chat_page():
+    """FIXED: Prompt goes to input bar first, then user can edit and submit"""
+    
     if "access_token" not in st.session_state or not st.session_state["access_token"]:
         st.error("Access token is not found or invalid.", icon="🚨")
         return
 
+    # Allow manual reset
+    if st.button("Start new chat", key="reset_main_chat_btn"):
+        _clear_main_chat_state()
+        st.rerun()
+
+    if "thread_id" not in st.session_state:
+        try:
+            headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+            r = requests.post(f"{API_BASE}/thread", timeout=120, headers=headers)
+            r.raise_for_status()
+            st.session_state["thread_id"] = r.json()["thread_id"]
+        except Exception as e:
+            st.error(f"Failed to create thread: {str(e)}", icon="🚨")
+            st.stop()
+
+    if "chat_history" not in st.session_state:
+        st.session_state["chat_history"] = []
+    
+    # Initialize chat_input_value if not exists
+    if "chat_input_value" not in st.session_state:
+        st.session_state["chat_input_value"] = ""
+
+    # Create a dedicated area for chat messages AT THE TOP
+    chat_container = st.container()
+    
+    # DISPLAY CHAT HISTORY AT THE TOP
+    with chat_container:
+        # Show intro and prompts only if no chat history
+        if len(st.session_state["chat_history"]) == 0:
+            show_intro()
+            show_suggested_prompts()
+        else:
+            # Display existing chat messages
+            for user_msg, agent_msg in st.session_state["chat_history"]:
+                with st.chat_message("user"):
+                    st.markdown(f"**You:** {user_msg}")
+                with st.chat_message("assistant"):
+                    st.markdown(f"**IAM Assistant:** {agent_msg}")
+
+    # Prefill using Enter-to-send without any button, via on_change flag
+    chat_placeholder = "Hi there! Geni is ready to help you on IAM – start using me"
+    if st.session_state.get("chat_input_value"):
+        prefill_text = st.session_state["chat_input_value"]
+        st.session_state["original_prompt_value"] = prefill_text
+        # Define an on_change callback to mark submission when Enter is pressed
+        def _main_prefill_submit():
+            st.session_state["main_prefill_submit"] = True
+        st.text_input(
+            "Your message:",
+            value=prefill_text,
+            key="chat_text_input",
+            placeholder=chat_placeholder,
+            on_change=_main_prefill_submit,
+        )
+        if st.session_state.get("main_prefill_submit"):
+            user_input = st.session_state.get("chat_text_input", "").strip()
+            st.session_state["main_prefill_submit"] = False
+            st.session_state["chat_input_value"] = ""
+            st.session_state["original_prompt_value"] = ""
+            if user_input:
+                execute_chat_query(user_input, chat_container)
+                st.rerun()
+    else:
+        user_input = st.chat_input(chat_placeholder)
+        if user_input and user_input.strip():
+            execute_chat_query(user_input, chat_container)
+            st.rerun()
+
+def entra_service_page():
+    """Microsoft Entra Service chat interface - consistent with other assistants."""
+    if "access_token" not in st.session_state or not st.session_state["access_token"]:
+        st.error("Access token is not found or invalid.", icon="🚨")
+        return
+
+    # Ensure entra-agent thread exists
+    if "entra_agent_thread_id" not in st.session_state:
+        try:
+            headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+            r = requests.post(f"{API_BASE}/entra/agent/thread", timeout=120, headers=headers)
+            r.raise_for_status()
+            st.session_state["entra_agent_thread_id"] = r.json()["thread_id"]
+        except Exception as e:
+            st.error(f"Failed to create Entra Agent thread: {str(e)}", icon="🚨")
+            st.stop()
+
+    if "entra_chat_history" not in st.session_state:
+        st.session_state["entra_chat_history"] = []
+    if "entra_agent_history" not in st.session_state:
+        st.session_state["entra_agent_history"] = []
+
+    chat_container = st.container()
+    with chat_container:
+        if len(st.session_state["entra_chat_history"]) == 0:
+            # Show prompts grid when there is no chat yet
+            show_entra_suggested_prompts()
+        else:
+            for user_msg, agent_msg, intent in st.session_state["entra_chat_history"]:
+                with st.chat_message("user"):
+                    st.markdown(f"**You:** {user_msg}")
+                with st.chat_message("assistant"):
+                    st.markdown(f"**Microsoft Entra:** {agent_msg}")
+
+    chat_placeholder = "Ask me to perform IAM operations (e.g., 'list users', 'create group', 'get user details')"
+    if st.session_state.get("entra_chat_input_value"):
+        prefill_text = st.session_state["entra_chat_input_value"]
+        st.session_state["entra_original_prompt_value"] = prefill_text
+        def _entra_prefill_submit():
+            st.session_state["entra_prefill_submit"] = True
+        st.text_input(
+            "Your message:",
+            value=prefill_text,
+            key="entra_chat_text_input",
+            placeholder=chat_placeholder,
+            on_change=_entra_prefill_submit,
+        )
+        if st.session_state.get("entra_prefill_submit"):
+            user_input = st.session_state.get("entra_chat_text_input", "").strip()
+            st.session_state["entra_prefill_submit"] = False
+            st.session_state["entra_chat_input_value"] = ""
+            st.session_state["entra_original_prompt_value"] = ""
+            if user_input:
+                execute_entra_query(user_input, chat_container)
+                st.rerun()
+    else:
+        user_input = st.chat_input(chat_placeholder)
+        if user_input and user_input.strip():
+            execute_entra_query(user_input, chat_container)
+            st.rerun()
+
+def ad_service_page():
+    """Active Directory Service chat interface - consistent with other assistants."""
+    if "access_token" not in st.session_state or not st.session_state["access_token"]:
+        st.error("Access token is not found or invalid.", icon="🚨")
+        return
+
+    # Ensure AD thread exists
+    if "ad_thread_id" not in st.session_state:
+        try:
+            headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+            r = requests.post(f"{API_BASE}/ad/thread", timeout=120, headers=headers)
+            r.raise_for_status()
+            st.session_state["ad_thread_id"] = r.json()["thread_id"]
+        except Exception as e:
+            st.error(f"Failed to create AD thread: {str(e)}", icon="🚨")
+            st.stop()
+
+    if "ad_chat_history" not in st.session_state:
+        st.session_state["ad_chat_history"] = []
+
+    chat_container = st.container()
+    with chat_container:
+        if len(st.session_state["ad_chat_history"]) == 0:
+            # Show prompts grid when there is no chat yet
+            show_ad_suggested_prompts()
+        else:
+            for user_msg, agent_msg, action in st.session_state["ad_chat_history"]:
+                with st.chat_message("user"):
+                    st.markdown(f"**You:** {user_msg}")
+                with st.chat_message("assistant"):
+                    st.markdown(f"**AD_Provisioning_Agent:** {agent_msg}")
+
+    chat_placeholder = "Ask me to perform AD operations (e.g., 'list users', 'list groups', 'get user details')"
+    if st.session_state.get("ad_chat_input_value"):
+        prefill_text = st.session_state["ad_chat_input_value"]
+        st.session_state["ad_original_prompt_value"] = prefill_text
+        def _ad_prefill_submit():
+            st.session_state["ad_prefill_submit"] = True
+        st.text_input(
+            "Your message:",
+            value=prefill_text,
+            key="ad_chat_text_input",
+            placeholder=chat_placeholder,
+            on_change=_ad_prefill_submit,
+        )
+        if st.session_state.get("ad_prefill_submit"):
+            user_input = st.session_state.get("ad_chat_text_input", "").strip()
+            st.session_state["ad_prefill_submit"] = False
+            st.session_state["ad_chat_input_value"] = ""
+            st.session_state["ad_original_prompt_value"] = ""
+            if user_input:
+                execute_ad_query(user_input, chat_container)
+                st.rerun()
+    else:
+        user_input = st.chat_input(chat_placeholder)
+        if user_input and user_input.strip():
+            execute_ad_query(user_input, chat_container)
+            st.rerun()
+
+# ... (rest of the code remains the same)
+def execute_orchestrator_query(user_input, chat_container):
+    """Execute Orchestrator query with spinner and typing effect, parsing action/result."""
+    # Prepare prior chat history for the agent
+    prior = []
+    for (u, a) in st.session_state.get("orchestrator_chat_history", []):
+        prior.append({"role": "user", "content": u})
+        prior.append({"role": "assistant", "content": a})
+
+    headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+    payload = {
+        "thread_id": st.session_state.get("orch_thread_id"),
+        "message": user_input,
+        "chat_history": prior,
+    }
+
+    # Show thinking and typing at the top
+    with chat_container:
+        with st.chat_message("user"):
+            st.markdown(f"**You:** {user_input}")
+        with st.chat_message("assistant"):
+            with st.spinner("Executing IAM operation..."):
+                try:
+                    r = requests.post(f"{API_BASE}/orchestrator/chat", json=payload, timeout=180, headers=headers)
+                    r.raise_for_status()
+                    data = r.json()
+                    # Expecting {'action': '...', 'result': '...'}
+                    action = data.get("action", "none") if isinstance(data, dict) else "none"
+                    result = data.get("result", "") if isinstance(data, dict) else str(data)
+                except requests.exceptions.RequestException as e:
+                    action = "error"
+                    result = f"Failed to execute orchestrator command: {str(e)}"
+                except Exception as e:
+                    action = "error"
+                    result = f"Unexpected error: {str(e)}"
+
+            # Typing effect
+            if action and action != "none":
+                st.markdown(f"**Action:** `{action}`")
+            typing_placeholder = st.empty()
+            display_result = result if isinstance(result, str) else json.dumps(result, ensure_ascii=False)
+            typing_message = ""
+            for char in display_result:
+                typing_message += char
+                typing_placeholder.markdown(f"**Orchestrator:** {typing_message}")
+                time.sleep(0.01)
+
+    # Append to history and rerun
+    st.session_state.setdefault("orchestrator_chat_history", []).append((user_input, result))
+    st.rerun()
+
+
+def orchestrator_chat_page():
+    """Assistant for IAM Admin (Orchestrator) - restored full chat functionality."""
+    if "access_token" not in st.session_state or not st.session_state.get("access_token"):
+        st.error("Access token is not found or invalid.", icon="🚨")
+        return
+
+    # Ensure thread
     if "orch_thread_id" not in st.session_state:
         try:
             headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
@@ -1267,246 +2037,344 @@ def orchestrator_chat_page():
     if "orchestrator_chat_history" not in st.session_state:
         st.session_state["orchestrator_chat_history"] = []
 
-    container_class = "message-container no-messages" if len(st.session_state["orchestrator_chat_history"]) == 0 else "message-container"
-    st.markdown(f'<div class="{container_class}">', unsafe_allow_html=True)
-    if len(st.session_state["orchestrator_chat_history"]) == 0:
-        st.markdown('<div class="centered-intro">You are using "Assistant for Admin users" functionality</div>', unsafe_allow_html=True)
+    chat_container = st.container()
+    with chat_container:
+        if len(st.session_state["orchestrator_chat_history"]) == 0:
+            # Show admin prompts grid when no chat yet
+            show_admin_suggested_prompts()
+        else:
+            for user_msg, agent_msg in st.session_state["orchestrator_chat_history"]:
+                with st.chat_message("user"):
+                    st.markdown(f"**You:** {user_msg}")
+                with st.chat_message("assistant"):
+                    st.markdown(f"**Orchestrator:** {agent_msg}")
 
-    container = st.container()
-    for user_msg, agent_msg in st.session_state["orchestrator_chat_history"]:
-        with container:
-            with st.chat_message("user"):
-                st.markdown(f"**You:** {user_msg}")
-            with st.chat_message("assistant"):
-                _render_result_as_table_or_text(agent_msg, role_label="Orchestrator")
+    placeholder = "Ask the IAM Orchestrator to perform admin actions (e.g., 'provision user', 'list ownerless groups')."
+    # Prefill behavior similar to other pages
+    if st.session_state.get("orch_chat_input_value"):
+        prefill_text = st.session_state["orch_chat_input_value"]
+        st.session_state["orch_original_prompt_value"] = prefill_text
+        def _orch_prefill_submit():
+            st.session_state["orch_prefill_submit"] = True
+        st.text_input(
+            "Your message:",
+            value=prefill_text,
+            key="orch_chat_text_input",
+            placeholder=placeholder,
+            on_change=_orch_prefill_submit,
+        )
+        if st.session_state.get("orch_prefill_submit"):
+            user_input = st.session_state.get("orch_chat_text_input", "").strip()
+            st.session_state["orch_prefill_submit"] = False
+            st.session_state["orch_chat_input_value"] = ""
+            st.session_state["orch_original_prompt_value"] = ""
+            if user_input:
+                execute_orchestrator_query(user_input, chat_container)
+                st.rerun()
+    else:
+        user_input = st.chat_input(placeholder)
+        if user_input and user_input.strip():
+            execute_orchestrator_query(user_input, chat_container)
+            st.rerun()
 
-    prompt = st.chat_input("Hi there! Geni is ready to help you on IAM – start using me")
-    if prompt:
-        user_input = prompt
-        with st.spinner("Thinking..."):
-            try:
-                headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
-                payload = {
-                    "thread_id": st.session_state["orch_thread_id"],
-                    "message": user_input,
-                    "chat_history": [
-                        {"role": "user", "content": um} if i % 2 == 0 else {"role": "assistant", "content": am}
-                        for i, (um, am) in enumerate(st.session_state["orchestrator_chat_history"])
-                    ],
-                }
-                r = requests.post(f"{API_BASE}/orchestrator/chat", json=payload, timeout=120, headers=headers)
-                r.raise_for_status()
-                reply = r.json().get("result", "")
-            except Exception as e:
-                reply = "**Orchestrator is currently busy, please try again later.**"
-
-        is_structured = False
-        try:
-            parsed = json.loads(reply)
-            is_structured = isinstance(parsed, (list, dict))
-        except Exception:
-            is_structured = False
-
-        with st.chat_message("assistant"):
-            if is_structured:
-                _render_result_as_table_or_text(reply, role_label="Orchestrator")
-            else:
-                typing_placeholder = st.empty()
-                typing_message = ""
-                for char in reply:
-                    typing_message += char
-                    typing_placeholder.markdown(f"**Orchestrator**: {typing_message}")
-                    time.sleep(0.01)
-
-        st.session_state["orchestrator_chat_history"].append((user_input, reply))
-        st.rerun()
-
-def entra_service_page():
-    """Microsoft Entra Service chat interface"""
+def iam_dashboard_page():
+    """IAM Dashboard & Reports page that fetches data from the backend and renders summary tiles."""
     if "access_token" not in st.session_state or not st.session_state["access_token"]:
         st.error("Access token is not found or invalid.", icon="🚨")
         return
 
-    if "entra_thread_id" not in st.session_state:
-        st.session_state["entra_thread_id"] = f"entra-{int(time.time())}"
+    st.title("🛡️ IAM Security Dashboard (Summary)")
+    refresh = st.button("Refresh dashboard data", key="refresh_dashboard_btn")
 
-    if "entra_chat_history" not in st.session_state:
-        st.session_state["entra_chat_history"] = []
+    # Client-side cache with TTL
+    TTL_SECONDS = 3600  # 1 hour
+    data = None
+    error = None
+    now_ts = time.time()
+    cached_data = st.session_state.get("iam_dashboard_data")
+    cached_ts = st.session_state.get("iam_dashboard_ts", 0)
 
-    container_class = "message-container no-messages" if len(st.session_state["entra_chat_history"]) == 0 else "message-container"
-    st.markdown(f'<div class="{container_class}">', unsafe_allow_html=True)
-    
-    if len(st.session_state["entra_chat_history"]) == 0:
-        st.markdown('<div class="centered-intro">🔐 Microsoft Entra Service - Direct IAM Operations</div>', unsafe_allow_html=True)
-        
-        # Add quick action buttons
-        st.markdown("### Quick Actions")
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            if st.button("📋 List All Users", key="list_users_btn"):
-                process_entra_command("list all users")
-        
-        with col2:
-            if st.button("👥 List All Groups", key="list_groups_btn"):
-                process_entra_command("list all groups")
-        
-        with col3:
-            if st.button("ℹ️ Get User Details", key="user_details_btn"):
-                st.session_state["show_user_input"] = True
-                st.rerun()
-        
-        # Additional action buttons
-        col4, col5, col6 = st.columns(3)
-        
-        with col4:
-            if st.button("📊 List Top 10 Users", key="list_top_users_btn"):
-                process_entra_command("list top 10 users")
-        
-        with col5:
-            if st.button("🔍 Group Details", key="group_details_btn"):
-                st.session_state["show_group_input"] = True
-                st.rerun()
-        
-        with col6:
-            if st.button("🆕 Create User", key="create_user_btn"):
-                st.session_state["show_create_user_form"] = True
-                st.rerun()
-        
-        # Show input forms if requested
-        if st.session_state.get("show_user_input", False):
-            with st.form("user_details_form"):
-                user_email = st.text_input("Enter user email or ID:")
-                if st.form_submit_button("Get Details"):
-                    if user_email:
-                        process_entra_command(f"get details for user {user_email}")
-                        st.session_state["show_user_input"] = False
-                        st.rerun()
-        
-        if st.session_state.get("show_group_input", False):
-            with st.form("group_details_form"):
-                group_id = st.text_input("Enter group ID or name:")
-                if st.form_submit_button("Get Group Details"):
-                    if group_id:
-                        process_entra_command(f"get details for group {group_id}")
-                        st.session_state["show_group_input"] = False
-                        st.rerun()
-        
-        if st.session_state.get("show_create_user_form", False):
-            with st.form("create_user_form"):
-                st.markdown("#### Create New User")
-                display_name = st.text_input("Display Name:")
-                user_principal_name = st.text_input("Email (UserPrincipalName):")
-                password = st.text_input("Temporary Password:", type="password")
-                
-                if st.form_submit_button("Create User"):
-                    if display_name and user_principal_name and password:
-                        try:
-                            headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
-                            payload = {
-                                "display_name": display_name,
-                                "user_principal_name": user_principal_name,
-                                "password": password
-                            }
-                            
-                            r = requests.post(f"{API_BASE}/entra/users", json=payload, timeout=120, headers=headers)
-                            r.raise_for_status()
-                            
-                            result = r.json().get("message", "User created successfully")
-                            st.session_state["entra_chat_history"].append(
-                                (f"Create user: {display_name} ({user_principal_name})", result, "create_user")
-                            )
-                            st.session_state["show_create_user_form"] = False
-                            st.success("User creation request submitted!")
-                            st.rerun()
-                            
-                        except Exception as e:
-                            st.error(f"Failed to create user: {str(e)}")
-                    else:
-                        st.error("Please fill in all fields")
-
-    # Display chat history
-    container = st.container()
-    for user_msg, agent_msg, intent in st.session_state["entra_chat_history"]:
-        with container:
-            with st.chat_message("user"):
-                st.markdown(f"**You:** {user_msg}")
-            with st.chat_message("assistant"):
-                st.markdown(f"**Intent:** `{intent}`")
-                
-                # Format the response better
-                if isinstance(agent_msg, list):
-                    for item in agent_msg:
-                        st.markdown(f"• {item}")
-                elif agent_msg.startswith("❌"):
-                    st.error(agent_msg)
-                elif agent_msg.startswith("✅"):
-                    st.success(agent_msg)
+    if (not refresh) and cached_data is not None and (now_ts - cached_ts) < TTL_SECONDS:
+        data = cached_data
+    else:
+        with st.spinner("Loading dashboard data..."):
+            try:
+                headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
+                r = requests.get(f"{API_BASE}/dashboard/summary", timeout=180, headers=headers)
+                r.raise_for_status()
+                payload = r.json()
+                if payload.get("success"):
+                    data = payload.get("data", {})
+                    st.session_state["iam_dashboard_data"] = data
+                    st.session_state["iam_dashboard_ts"] = time.time()
                 else:
-                    # Check if it's formatted text with line breaks
-                    if "\n" in agent_msg:
-                        for line in agent_msg.split("\n"):
-                            if line.strip():
-                                if line.startswith("-"):
-                                    st.markdown(f"• {line[1:].strip()}")
-                                else:
-                                    st.markdown(line)
-                    else:
-                        st.markdown(f"**Result:** {agent_msg}")
+                    error = payload
+            except Exception as e:
+                error = str(e)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    if error:
+        st.error(f"Failed to load dashboard: {error}")
+        return
 
-    # Chat input
-    prompt = st.chat_input("Ask me to perform IAM operations (e.g., 'list users', 'create group', 'get user details')")
-    if prompt:
-        process_entra_command(prompt)
+    # Extract metrics similar to IamDashboard/dashboardApp.py
+    risky_data = data.get("risky_users", {}).get("value", [])
+    protected_data = data.get("protected_users", {}).get("value", [])
+    privileged_data = data.get("privileged_accounts", {}).get("value", [])
+    ownerless_entra = data.get("ownerless_groups_entra", {}).get("value", [])
+    mfa_apps = data.get("mfa_disabled_apps", {})
 
-def process_entra_command(user_input: str):
-    """Process Entra service commands"""
-    with st.spinner("Executing IAM operation..."):
-        try:
-            headers = {"Authorization": f"Bearer {st.session_state['access_token']}"}
-            payload = {
-                "message": user_input,
-                "thread_id": st.session_state["entra_thread_id"]
-            }
-            
-            r = requests.post(f"{API_BASE}/entra/chat", json=payload, timeout=120, headers=headers)
-            r.raise_for_status()
-            
-            response_data = r.json()
-            intent = response_data.get("intent", "unknown")
-            result = response_data.get("result", "No response received")
-            
-            # Add to chat history
-            st.session_state["entra_chat_history"].append((user_input, result, intent))
-            st.rerun()
-            
-        except requests.exceptions.RequestException as e:
-            error_msg = f"Failed to execute command: {str(e)}"
-            st.session_state["entra_chat_history"].append((user_input, error_msg, "error"))
-            st.rerun()
-        except Exception as e:
-            error_msg = f"Unexpected error: {str(e)}"
-            st.session_state["entra_chat_history"].append((user_input, error_msg, "error"))
-            st.rerun()
+    if isinstance(mfa_apps, str):
+        mfa_count = 0 if "✅" in mfa_apps else mfa_apps.count("\n")
+    else:
+        mfa_count = mfa_apps.get("count", 0)
+
+    ownerless_ad = data.get("ownerless_groups_ad", [])
+    memberless_groups = data.get("memberless_groups", {}).get("count", 0)
+    inactive_accounts = data.get("inactive_accounts", {}).get("count", 0)
+    service_accounts = data.get("service_accounts", {}).get("count", 0)
+    pwd_never_expire = data.get("pwd_never_expire", {}).get("count", 0)
+    account_lockouts = data.get("account_lockouts", {}).get("count", 0)
+
+    # Tile styles
+    tile_style = """
+    <style>
+    .metric-card {
+        background-color: #f9f9f9;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        text-align: center;
+        margin: 10px;
+    }
+    .metric-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #444;
+    }
+    .metric-value {
+        font-size: 26px;
+        font-weight: bold;
+        color: #2c7be5;
+    }
+    </style>
+    """
+    st.markdown(tile_style, unsafe_allow_html=True)
+
+    # Entra ID Metrics
+    st.subheader("☁️ Entra ID Metrics")
+    entra_metrics = [
+        ("🚨 Risky Users", len(risky_data)),
+        ("🛡️ Protected Users", len(protected_data)),
+        ("👑 Privileged Accounts", len(privileged_data)),
+        ("👥 Ownerless Groups", len(ownerless_entra)),
+        ("🔐 Apps without MFA", mfa_count),
+    ]
+    for i in range(0, len(entra_metrics), 2):
+        cols = st.columns(2)
+        for j, col in enumerate(cols):
+            if i + j < len(entra_metrics):
+                title, value = entra_metrics[i + j]
+                with col:
+                    card_html = (
+                        f'<div class="metric-card">'
+                        f'<div class="metric-title">{title}</div>'
+                        f'<div class="metric-value">{value}</div>'
+                        f'</div>'
+                    )
+                    st.markdown(card_html, unsafe_allow_html=True)
+
+    # Active Directory Metrics
+    st.subheader("🖥️ Active Directory Metrics")
+    ad_metrics = [
+        ("👥 Ownerless Groups (AD)", len(ownerless_ad)),
+        ("👥 Memberless Groups (AD)", memberless_groups),
+        ("⏳ Inactive Accounts (90d+)", inactive_accounts),
+        ("⚙️ Service Accounts", service_accounts),
+        ("🔒 Password Never Expires", pwd_never_expire),
+        ("🚫 Account Lockouts", account_lockouts),
+    ]
+    for i in range(0, len(ad_metrics), 2):
+        cols = st.columns(2)
+        for j, col in enumerate(cols):
+            if i + j < len(ad_metrics):
+                title, value = ad_metrics[i + j]
+                with col:
+                    card_html = (
+                        f'<div class="metric-card">'
+                        f'<div class="metric-title">{title}</div>'
+                        f'<div class="metric-value">{value}</div>'
+                        f'</div>'
+                    )
+                    st.markdown(card_html, unsafe_allow_html=True)
 
 def about_iam():
-    st.markdown('<div style="margin-top: 100px;"></div>', unsafe_allow_html=True)
-    st.markdown("### About IAM")
-    st.write("Identity and Access Management (IAM) is a framework of policies and technologies that ensure the right individuals have appropriate access to technology resources.")
+    """About IAM page with comprehensive information"""
+    st.markdown('<div class="centered-intro">About IAM Geni - Your Intelligent Identity and Access Management Assistant</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    ## 🎯 **What is IAM Geni?**
+    
+    IAM Geni is an advanced AI-powered assistant specifically designed to streamline Identity and Access Management operations. Built on cutting-edge AI technology, Geni provides intelligent automation, comprehensive reporting, and seamless integration with your existing IAM infrastructure.
+    
+    ## 🚀 **Key Features**
+    
+    ### 👤 **Assistant for End Users**
+    - Password reset assistance
+    - Account unlock requests  
+    - Access request submissions
+    - Profile management guidance
+    - Self-service troubleshooting
+    
+    ### 👑 **Assistant for IAM Admins**
+    - Advanced user provisioning
+    - Role and permission management
+    - Bulk operations support
+    - Compliance monitoring
+    - Audit trail analysis
+    
+    ### 🔐 **Microsoft Entra Service**
+    - Cloud identity management
+    - Conditional access policies
+    - Multi-factor authentication setup
+    - Application registrations
+    - Security insights and analytics
+    
+    ### 🏢 **Active Directory Service**
+    - On-premises directory management
+    - Group policy administration
+    - Domain controller monitoring
+    - LDAP operations
+    - Hybrid identity synchronization
+    
+    ### 📊 **IAM Dashboard & Reports**
+    - Real-time security metrics
+    - Compliance reporting
+    - User activity analytics
+    - Risk assessment dashboards
+    - Automated compliance checks
+    """)
 
 def rules_and_regulations():
-    st.markdown('<div style="margin-top: 100px;"></div>', unsafe_allow_html=True)
-    st.markdown("### Rules and Regulations")
-    st.write("1. Only authorized users can access the system.")
-    st.write("2. Users must follow the company's security guidelines.")
-    st.write("3. All actions performed in the system must be logged.")
-    st.write("4. MFA must be enabled for sensitive areas.")
+    """Rules and Regulations page"""
+    st.markdown('<div class="centered-intro">IAM Geni - Rules, Regulations & Usage Guidelines</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    ## 📋 **Usage Guidelines**
+    
+    ### ✅ **Permitted Activities**
+    - Legitimate IAM operations within your assigned scope
+    - Password resets for authorized accounts
+    - Access requests through proper approval workflows
+    - Compliance reporting and auditing activities
+    - Self-service profile management
+    
+    ### ❌ **Prohibited Activities**
+    - Unauthorized access attempts to restricted systems
+    - Sharing of login credentials or access tokens
+    - Bulk operations without proper authorization
+    - Bypassing established approval workflows
+    - Using the system for non-business purposes
+    
+    ## 🔐 **Security Requirements**
+    
+    ### 🔑 **Authentication Standards**
+    - Multi-factor authentication (MFA) is **mandatory**
+    - Password policies must comply with organizational standards
+    - Session timeouts are enforced for security
+    - Regular access reviews are required
+    
+    ### 🛡️ **Data Protection**
+    - All user data is encrypted at rest and in transit
+    - Access logs are maintained for audit purposes
+    - Personal information is handled per GDPR guidelines
+    - Data retention policies are strictly enforced
+    
+    ## ⚖️ **Compliance Framework**
+    
+    ### 📊 **Regulatory Compliance**
+    - **GDPR**: General Data Protection Regulation compliance
+    - **HIPAA**: Health Insurance Portability and Accountability Act
+    - **SOX**: Sarbanes-Oxley Act requirements
+    - **ISO 27001**: Information security management standards
+    - **NIST**: Cybersecurity Framework alignment
+    
+    ### 🔍 **Audit Requirements**
+    - All administrative actions are logged
+    - Regular compliance assessments are conducted
+    - Audit trails are maintained for legal requirements
+    - Violation reporting is mandatory
+    
+    ## 🚨 **Incident Response**
+    
+    ### 📞 **Reporting Security Incidents**
+    1. **Immediate Action**: Contact the security team immediately
+    2. **Documentation**: Record all relevant details
+    3. **Escalation**: Follow the established incident response procedure
+    4. **Cooperation**: Assist with investigation as required
+    
+    ### ⏰ **Response Times**
+    - **Critical incidents**: 15 minutes response time
+    - **High priority**: 1 hour response time
+    - **Medium priority**: 4 hours response time
+    - **Low priority**: 24 hours response time
+    
+    ## 📝 **User Responsibilities**
+    
+    ### 👤 **End Users**
+    - Protect login credentials and access tokens
+    - Report suspicious activities immediately
+    - Follow established password policies
+    - Complete required security training
+    
+    ### 👑 **Administrators**
+    - Implement least privilege access principles
+    - Conduct regular access reviews
+    - Maintain accurate user provisioning records
+    - Follow change management procedures
+    
+    ## ⚡ **System Limitations**
+    
+    ### 🔧 **Technical Constraints**
+    - API rate limits apply to prevent system overload
+    - Bulk operations have defined batch size limits
+    - Certain operations require additional approvals
+    - System maintenance windows may affect availability
+    
+    ### ⏱️ **Service Level Agreements**
+    - **Uptime**: 99.9% availability guarantee
+    - **Performance**: Sub-second response times for standard operations
+    - **Support**: 24/7 technical support available
+    - **Updates**: Regular feature updates and security patches
+    
+    ## 📚 **Additional Resources**
+    
+    - **Training Materials**: Available in the learning portal
+    - **Best Practices Guide**: Detailed operational procedures
+    - **FAQ Section**: Common questions and solutions
+    - **Video Tutorials**: Step-by-step guides for complex operations
+    
+    ## 🔗 **Related Policies**
+    
+    - Information Security Policy
+    - Acceptable Use Policy
+    - Data Classification Guidelines
+    - Incident Response Procedures
+    - Change Management Policy
+    
+    ---
+    
+    **Last Updated**: January 2025 | **Policy Version**: 2.1 | **Review Date**: June 2025
+    
+    For questions about these policies, contact the **Compliance Team** at compliance@your-organization.com
+    """)
 
-# MAIN ROUTING LOGIC WITH ALL YOUR FUNCTIONS
+# MAIN ROUTING LOGIC WITH ALL FUNCTIONS
 if st.session_state.get("authenticated", False):
     active_page = st.session_state.get("active_page", "main_chat")
+    # Reset chat state when navigating into a page
+    handle_page_entry(active_page)
+    # Mark entry complete so subsequent reruns on the same page don't clear prompt selections
+    st.session_state["last_active_page"] = active_page
    
     if active_page == "main_chat":
         main_chat_page()
@@ -1515,26 +2383,44 @@ if st.session_state.get("authenticated", False):
     elif active_page == "entra_id_assistant":
         entra_service_page()
     elif active_page == "active_directory_assistant":
-        st.markdown('<div class="centered-intro">🏢 Active Directory Service - Coming Soon</div>', unsafe_allow_html=True)
-        st.info("This service will be available in the next update.")
+        ad_service_page()  # NOW CALLS THE ACTUAL AD SERVICE PAGE!
     elif active_page == "iam_metrics_dashboard":
-        st.markdown('<div class="centered-intro">📊 IAM Dashboard & Reports - Coming Soon</div>', unsafe_allow_html=True)
-        st.info("Dashboard and reporting features will be available in the next update.")
+        iam_dashboard_page()
     elif active_page == "about_iam":
         about_iam()
     elif active_page == "rules":
         rules_and_regulations()
     else:
         main_chat_page()
+        
 else:
-    st.markdown("""
-<div style="display:flex; justify-content:center; align-items:center; height:80vh; text-align:center; font-size:18px; line-height:1.6;">
-    <div>
-        Ask any thing on Identity and Access Management
-        <br>
-        Click the links on the left side to understand more on how these assistants can help you
-        <br>
-        Login if you want to start using them!
-    </div>
-</div>
-""", unsafe_allow_html=True)
+    # Not authenticated - show welcome page
+    st.markdown('<div class="main-content-logged-out">', unsafe_allow_html=True)
+    st.markdown("Please log in to access IAM Geni services.")
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Show features preview for non-authenticated users
+    st.markdown("---")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown(" ### 👤 **Assistant for End Users**")
+        st.markdown("- Password reset assistance")
+        st.markdown("- Profile management guidance")
+        st.markdown("- Self-service troubleshooting")
+        
+        st.markdown("### 👑 **Assistant for IAM Admins**")
+        st.markdown("- Advanced user provisioning")
+        st.markdown("- admin-level enterprise documentation")
+        st.markdown("- Role and permission management")
+    
+    with col2:
+        st.markdown("### 📊 **IAM Dashboard & Reports**")
+        st.markdown("- Real-time audit trails")
+        st.markdown("- Compliance dashboards")
+        st.markdown("- Risk assessments")
+        
+        st.markdown("### 🏢 **Active Directory Service**")
+        st.markdown("- On-premises directory management")
+        st.markdown("- LDAP operations")
+        st.markdown("- Group policy administration")

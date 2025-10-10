@@ -1,0 +1,8 @@
+{
+  "prompts": [
+    "User provisioning failed into SAP system? What is the process to be followed to manually provision the user account?",
+    "Give details of  SoX impacted applications and users associated with it in Entra ID.",
+    "What are the step by step break-glass process to access Azure Console, if CyberArk PAM solution is not available? "
+  
+  ]
+}

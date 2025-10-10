@@ -1,0 +1,12 @@
+{
+    "prompts": [
+      "Provide the count of ownerless groups in Active Directory?",
+      "Provide the list of Active Directory groups where the assigned owners are in inactive state?", 
+      "Provide the list of Active Directory groups which are not following a  SG_ as specific naming convention.",
+      "Provide a list of users who are a member of TestgrpAD",
+      "Add or remove a user from a <<specific group name>>",
+      "Provide the list of AD groups with zero members in them?"
+     
+    ]
+  }
+  

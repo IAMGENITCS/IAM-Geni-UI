@@ -1,0 +1,9 @@
+{
+    "prompts": [
+        "Provide the list of users who were added to Global Administrator role in last 30 days",
+        "List all the guest users who haven't signed in for the last 90 days",
+        "Provide the list of Entra ID groups where the assigned owners are in disabled state?",
+"CRUD operations for a user in Entra ID",
+"CRUD operations for an Entra ID group"
+    ]
+}
